@@ -1,0 +1,72 @@
+[
+  {
+    "id": "ntc-1",
+    "title": "Odd Semester 2026 Minor-1 Examination Schedule & Seating Matrix",
+    "category": "Academic",
+    "urgency": "urgent",
+    "pinned": true,
+    "date": "Aug 21, 2026",
+    "source": "Office of Dean (Academic Courses)",
+    "refNo": "TIET/ACAD/2026/08/412",
+    "summary": "Minor-1 exams for 1st Year UG will commence from September 10, 2026. Hall tickets and classroom seat allocations will be visible on the student portal.",
+    "content": "The comprehensive schedule for Minor-1 Examinations for all 1st Year B.Tech and Dual Degree programs is hereby announced. Exams will be held in two sessions (Morning: 09:30 - 11:30 AM, Afternoon: 02:30 - 04:30 PM).\n\nKey Guidelines for First-Year Students:\n1. Students must carry their Physical RFID ID card or temporary registration slip.\n2. Smart watches, mobile devices, and programmable calculators are strictly prohibited.\n3. Seating allocation will be displayed on the notice boards outside LHC 101 and 102 30 minutes prior to exam start.",
+    "attachment": "Exam_Schedule_Minor1_2026.pdf",
+    "attachmentSize": "1.4 MB"
+  },
+  {
+    "id": "ntc-2",
+    "title": "Clubs Carnival & Orientation Auditions: 'Aarohan 2026'",
+    "category": "Events & Clubs",
+    "urgency": "event",
+    "pinned": true,
+    "date": "Aug 20, 2026",
+    "source": "Student Activity Center (SAC)",
+    "refNo": "SAC/FEST/2026/03",
+    "summary": "Annual Fresher Club Showcase on Aug 29-30 at the Main Amphitheatre. Register for Coding, Robotics, Drama, Music, Debate, and E-Cell.",
+    "content": "Welcome Freshers! The Student Activity Center invites you to 'Aarohan 2026' - the annual fresher induction fair. Over 28 technical, cultural, and sports societies will showcase live projects, host mini-competitions, and conduct audition registrations.\n\nHighlights:\n- Tech Village: Robotics arena, drone demo, live AI hackathon teaser.\n- Cult Arena: Western music jam, theater auditions, photography gallery.\n- E-Cell Shark Tank: 60-second fresher pitch contest with seed prizes.",
+    "attachment": "Clubs_Directory_2026.pdf",
+    "attachmentSize": "3.2 MB"
+  },
+  {
+    "id": "ntc-3",
+    "title": "Campus Wi-Fi MAC Registration & Microsoft Office 365 License Allocation",
+    "category": "Campus IT",
+    "urgency": "general",
+    "pinned": false,
+    "date": "Aug 19, 2026",
+    "source": "Computer Services Center (CSC)",
+    "refNo": "CSC/NET/2026/109",
+    "summary": "Register your Laptop and Phone MAC addresses on the internal net portal to access campus-wide high-speed Eduroam / Campus-Wifi network.",
+    "content": "All newly admitted students must register their device MAC addresses to access the campus high-speed network (Campus-WiFi and Eduroam).\n\nSteps for Registration:\n1. Connect to 'Campus-Setup-Guest' network on campus.\n2. Browse to https://netreg.thapar.internal and login with your LDAP credentials (Roll No & initial password sent to your registered email).\n3. Add up to 3 devices per student. Wi-Fi will activate within 15 minutes.",
+    "attachment": "Wifi_Setup_Guide_Windows_Mac_Android.pdf",
+    "attachmentSize": "850 KB"
+  },
+  {
+    "id": "ntc-4",
+    "title": "National Merit-cum-Means & State Scholarship Applications 2026-27",
+    "category": "Scholarships",
+    "urgency": "urgent",
+    "pinned": false,
+    "date": "Aug 17, 2026",
+    "source": "Student Welfare & Scholarship Cell",
+    "refNo": "SWC/SCH/2026/05",
+    "summary": "Applications invited for full fee waivers, MCM financial aid, and corporate endowment scholarships. Last date for document submission: Sep 15.",
+    "content": "Eligible first-year undergraduate students whose family annual income falls below the prescribed thresholds may apply for:\n1. Institute Merit-cum-Means (MCM) Scholarship (100% Tuition waiver + Monthly stipend).\n2. Central Sector Top Class Scholarship for SC/ST students.\n3. Alumni Benevolent Fund.\n\nSubmit physical photocopies of Income Certificates and 12th Marksheets at Counter 2, Admin Block.",
+    "attachment": "Scholarship_Application_Guidelines.pdf",
+    "attachmentSize": "2.1 MB"
+  },
+  {
+    "id": "ntc-5",
+    "title": "Revised Mess Timings & Weekend Late-Night Delivery Guidelines",
+    "category": "Hostel & Mess",
+    "urgency": "general",
+    "pinned": false,
+    "date": "Aug 15, 2026",
+    "source": "Council of Wardens (Hostel Affairs)",
+    "refNo": "COW/HOSTEL/2026/88",
+    "summary": "Breakfast will now be served from 7:15 AM to 9:30 AM on weekdays. Food delivery riders are permitted up to Main Hostel Gate until 11:30 PM.",
+    "content": "In response to student requests regarding morning 8:00 AM classes, breakfast timings across all undergraduate mess halls have been adjusted.\n\nNew Meal Schedule:\n- Breakfast: 07:15 AM - 09:30 AM (Sundays: 07:45 AM - 10:00 AM)\n- Lunch: 12:15 PM - 02:15 PM\n- Evening Snacks: 05:00 PM - 06:15 PM\n- Dinner: 07:30 PM - 09:45 PM",
+    "attachment": "Hostel_Rules_2026.pdf",
+    "attachmentSize": "500 KB"
+  }
+]
