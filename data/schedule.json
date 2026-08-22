@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "code": "CS101",
+    "name": "Intro to Programming & Problem Solving",
+    "type": "Theory Lecture",
+    "instructor": "Prof. Rajesh Verma",
+    "time": "09:00 AM - 10:30 AM",
+    "venue": "Lecture Hall Complex (LHC-102)",
+    "status": "completed",
+    "attendance": "Present (94%)",
+    "color": "blue",
+    "roomLink": "loc-acad1"
+  },
+  {
+    "id": 2,
+    "code": "MA101",
+    "name": "Calculus & Linear Algebra",
+    "type": "Theory Lecture",
+    "instructor": "Dr. K. N. Rao",
+    "time": "10:45 AM - 12:15 PM",
+    "venue": "Academic Block 1 - Room 204",
+    "status": "active",
+    "attendance": "In Session Now",
+    "color": "emerald",
+    "roomLink": "loc-acad1"
+  },
+  {
+    "id": 3,
+    "code": "PH101",
+    "name": "Applied Physics Lab",
+    "type": "Practical / Lab",
+    "instructor": "Dr. Ananya Sen & TAs",
+    "time": "02:00 PM - 04:30 PM",
+    "venue": "Science Complex, Physics Lab C",
+    "status": "upcoming",
+    "attendance": "Up Next",
+    "color": "purple",
+    "roomLink": "loc-acad1"
+  },
+  {
+    "id": 4,
+    "code": "HS101",
+    "name": "Technical Communication & Ethics",
+    "type": "Tutorial / Workshop",
+    "instructor": "Prof. David Vance",
+    "time": "04:45 PM - 05:45 PM",
+    "venue": "Humanities Block - Seminar Hall 2",
+    "status": "upcoming",
+    "attendance": "Upcoming",
+    "color": "amber",
+    "roomLink": "loc-acad1"
+  }
+]
