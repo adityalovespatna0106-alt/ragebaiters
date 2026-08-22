@@ -1,0 +1,50 @@
+[
+  {
+    "id": "asg-1",
+    "title": "Data Structures & Array Pointers Lab Sheet #3",
+    "course": "CS101 - Intro to Programming",
+    "dueDate": "Tomorrow, 11:59 PM",
+    "dueInDays": 1,
+    "urgency": "urgent",
+    "weightage": "5% of Internal Grade",
+    "submitted": false,
+    "format": "PDF / C++ Source Archive",
+    "description": "Implement dynamic 2D matrices and pointer arithmetic functions with comprehensive test cases and complexity analysis."
+  },
+  {
+    "id": "asg-2",
+    "title": "Eigenvalues & Diagonalization Problem Set",
+    "course": "MA101 - Calculus & Algebra",
+    "dueDate": "Aug 26, 2026 (In 4 days)",
+    "dueInDays": 4,
+    "urgency": "warning",
+    "weightage": "10 Marks Assignment",
+    "submitted": false,
+    "format": "Handwritten Scan PDF",
+    "description": "Solve problems 1-15 from Chapter 4 of Kreyszig Advanced Engineering Math covering orthogonal matrices."
+  },
+  {
+    "id": "asg-3",
+    "title": "Diffraction Spectrometer Experiment Lab Report",
+    "course": "PH101 - Applied Physics",
+    "dueDate": "Aug 28, 2026",
+    "dueInDays": 6,
+    "urgency": "normal",
+    "weightage": "Lab Manual Grade",
+    "submitted": false,
+    "format": "Hardcopy submission at Physics Lab",
+    "description": "Calculate grating pitch and wavelength dispersion with error analysis graphs and signature of lab TA."
+  },
+  {
+    "id": "asg-4",
+    "title": "Resume & Professional Bio Drafting",
+    "course": "HS101 - Technical Communication",
+    "dueDate": "Aug 20, 2026",
+    "dueInDays": -2,
+    "urgency": "normal",
+    "weightage": "Internal Assessment",
+    "submitted": true,
+    "format": "PDF on Moodle",
+    "description": "Peer-reviewed introductory professional profile and executive summary for college career cell."
+  }
+]
