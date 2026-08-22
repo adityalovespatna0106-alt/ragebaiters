@@ -1,0 +1,9 @@
+[
+  { "id": "chk-1", "text": "Collect RFID Smart Student ID Card from Admin Counter 4", "done": true, "category": "Essential" },
+  { "id": "chk-2", "text": "Register Laptop & Mobile MAC on campus Wi-Fi network", "done": true, "category": "IT Setup" },
+  { "id": "chk-3", "text": "Submit Anti-Ragging Undertaking on University portal", "done": true, "category": "Mandatory" },
+  { "id": "chk-4", "text": "Issue Recommended Textbooks from Central Library", "done": false, "category": "Academics" },
+  { "id": "chk-5", "text": "Attend 'Aarohan 2026' Fresher Clubs Orientation Fair", "done": false, "category": "Social" },
+  { "id": "chk-6", "text": "Connect with assigned Senior Mentor for 1st Year Roadmap", "done": false, "category": "Mentorship" },
+  { "id": "chk-7", "text": "Register biometric attendance for Hostel & Mess entry", "done": false, "category": "Hostel" }
+]
