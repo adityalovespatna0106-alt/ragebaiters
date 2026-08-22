@@ -1,0 +1,42 @@
+[
+  {
+    "id": "dl-1",
+    "title": "Minor Exam 1 Course Audit & Elective Verification",
+    "category": "Academic",
+    "date": "Aug 25, 2026",
+    "timeRemaining": "3 days left",
+    "urgent": true,
+    "badge": "High Priority",
+    "actionText": "Verify on ERP Portal"
+  },
+  {
+    "id": "dl-2",
+    "title": "Physical RFID Campus Smart Card Collection",
+    "category": "Administration",
+    "date": "Aug 27, 2026",
+    "timeRemaining": "5 days left",
+    "urgent": false,
+    "badge": "Admin Desk",
+    "actionText": "Counter 4, Admin Block"
+  },
+  {
+    "id": "dl-3",
+    "title": "Fresher Club Inductions & Audition Signups",
+    "category": "Student Life",
+    "date": "Aug 31, 2026",
+    "timeRemaining": "9 days left",
+    "urgent": false,
+    "badge": "Societies",
+    "actionText": "Explore Clubs"
+  },
+  {
+    "id": "dl-4",
+    "title": "Institute Merit-cum-Means Scholarship Form Submission",
+    "category": "Finance & Aid",
+    "date": "Sep 05, 2026",
+    "timeRemaining": "14 days left",
+    "urgent": false,
+    "badge": "Financial Aid",
+    "actionText": "Download Application"
+  }
+]
