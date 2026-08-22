@@ -1,0 +1,2884 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusBuddy - Thapar Institute of Technology</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+    }
+    .dark .glass-panel {
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+    }
+    .dark .glass-card {
+      background: rgba(30, 41, 59, 0.85);
+      border-color: rgba(51, 65, 85, 0.6);
+    }
+
+    .map-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1.25rem;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .map-pin {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 10;
+    }
+    .map-pin:hover {
+      transform: translate(-50%, -50%) scale(1.25);
+      z-index: 25;
+    }
+    .map-pin.active {
+      transform: translate(-50%, -50%) scale(1.35);
+      z-index: 30;
+    }
+
+    .pulse-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 9999px;
+      animation: pin-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+    @keyframes pin-ping {
+      75%, 100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .live-pulse {
+      animation: subtle-pulse 1.8s infinite ease-in-out;
+    }
+    @keyframes subtle-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.05); }
+    }
+
+    .modal-backdrop {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-40 w-full glass-panel border-b border-slate-200/80 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo & Campus Tag -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('dashboard')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/25">
+            <i class="fa-solid fa-graduation-cap text-lg"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="font-heading font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">Campus<span class="text-brand-600 dark:text-brand-400">Buddy</span></span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300">
+                Freshers '26
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">Thapar Institute of Technology - Fresher Hub</p>
+          </div>
+        </div>
+
+        <!-- Quick Search Bar -->
+        <div class="hidden md:flex items-center flex-1 max-w-md mx-6">
+          <button onclick="openGlobalSearch()" class="w-full flex items-center justify-between px-3.5 py-2 text-xs text-slate-500 bg-slate-100 dark:bg-slate-900 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-brand-500 transition">
+            <span class="flex items-center space-x-2">
+              <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+              <span>Search classes, mentors, rooms, notices...</span>
+            </span>
+            <kbd class="px-2 py-0.5 text-[10px] font-mono bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded text-slate-500">Ctrl K</kbd>
+          </button>
+        </div>
+
+        <!-- Right Controls: Dark Mode & Profile -->
+        <div class="flex items-center space-x-3">
+          <!-- Dark Mode Toggle -->
+          <button onclick="toggleTheme()" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Theme">
+            <i class="fa-solid fa-moon dark:hidden"></i>
+            <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+          </button>
+
+          <!-- Student Profile Pill -->
+          <div class="flex items-center space-x-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Aarav" class="w-8 h-8 rounded-full ring-2 ring-brand-500/50 object-cover">
+            <div class="hidden sm:block text-left">
+              <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">Aarav Sharma</p>
+              <p class="text-[10px] text-slate-500 dark:text-slate-400">1st Year CSE (Sec-B)</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MAIN NAVIGATION TABS -->
+    <div class="border-t border-slate-200/60 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/80">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex space-x-1 sm:space-x-3 overflow-x-auto py-2 scrollbar-none" id="main-nav-tabs">
+          <button onclick="navigateTo('dashboard')" data-tab="dashboard" class="nav-tab active flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all">
+            <i class="fa-solid fa-table-columns"></i>
+            <span>Dashboard</span>
+          </button>
+          
+          <button onclick="navigateTo('ask')" data-tab="ask" class="nav-tab flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all">
+            <i class="fa-solid fa-wand-magic-sparkles text-brand-500"></i>
+            <span>Ask CampusBuddy</span>
+            <span class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300 font-bold">AI</span>
+          </button>
+
+          <button onclick="navigateTo('seniors')" data-tab="seniors" class="nav-tab flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all">
+            <i class="fa-solid fa-user-group"></i>
+            <span>Senior Connect</span>
+          </button>
+
+          <button onclick="navigateTo('guide')" data-tab="guide" class="nav-tab flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <span>Campus Guide</span>
+          </button>
+
+          <button onclick="navigateTo('notices')" data-tab="notices" class="nav-tab flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span>Important Notices</span>
+          </button>
+
+          <button onclick="navigateTo('toolkit')" data-tab="toolkit" class="nav-tab flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all">
+            <i class="fa-solid fa-toolbox"></i>
+            <span>Fresher Toolkit</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ========================================== -->
+    <!-- 1. DASHBOARD -->
+    <!-- ========================================== -->
+    <section id="section-dashboard" class="app-section space-y-6">
+      
+      <!-- Fresher Welcome Banner -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-700 text-white p-6 sm:p-8 shadow-xl shadow-brand-500/10">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white">
+                🌱 Day 12 of Semester 1
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-200 backdrop-blur-md">
+                ● Academic Session Active
+              </span>
+            </div>
+            <h1 class="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+              Welcome back, Aarav!
+            </h1>
+            <p class="mt-1 text-sm sm:text-base text-indigo-100 max-w-xl">
+              You have <strong class="text-white underline">3 classes</strong> scheduled today and <strong class="text-white underline">1 assignment</strong> due tomorrow night. Everything you need is right here.
+            </p>
+          </div>
+
+          <!-- Metrics -->
+          <div class="grid grid-cols-3 gap-3 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-center">
+            <div>
+              <p class="text-[11px] text-indigo-200">Attendance</p>
+              <p class="text-lg sm:text-xl font-heading font-extrabold text-emerald-300">91%</p>
+              <span class="text-[10px] text-emerald-200">Safe Zone</span>
+            </div>
+            <div class="border-x border-white/15 px-3">
+              <p class="text-[11px] text-indigo-200">Credits</p>
+              <p class="text-lg sm:text-xl font-heading font-extrabold text-white">22</p>
+              <span class="text-[10px] text-indigo-200">Enrolled</span>
+            </div>
+            <div>
+              <p class="text-[11px] text-indigo-200">Pending</p>
+              <p class="text-lg sm:text-xl font-heading font-extrabold text-amber-300">2</p>
+              <span class="text-[10px] text-amber-200">Deadlines</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fresher Shortcuts -->
+        <div class="mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center gap-2 text-xs">
+          <span class="font-semibold text-indigo-200">Quick Shortcuts:</span>
+          <button onclick="askQuestionPreset('Where is the library?')" class="px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-book-open"></i><span>Library Timings</span>
+          </button>
+          <button onclick="askQuestionPreset('How can I join a club?')" class="px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-users"></i><span>Join Clubs</span>
+          </button>
+          <button onclick="navigateTo('toolkit')" class="px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-utensils"></i><span>Mess Menu</span>
+          </button>
+          <button onclick="navigateTo('toolkit')" class="px-3 py-1.5 rounded-full bg-red-500/30 hover:bg-red-500/50 text-red-200 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-phone"></i><span>Emergency SOS</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dashboard 2-Column Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Today's Schedule & Assignments (Left 2 cols) -->
+        <div class="lg:col-span-2 space-y-6">
+          
+          <!-- Classes -->
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+                  <i class="fa-regular fa-calendar-check"></i>
+                </div>
+                <div>
+                  <h2 class="font-heading font-bold text-lg text-slate-900 dark:text-white">Today's Class Schedule</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Friday • Semester 1 Common Engineering Coursework</p>
+                </div>
+              </div>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 live-pulse"></span>
+                In Session
+              </span>
+            </div>
+
+            <div class="space-y-3" id="schedule-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Assignments -->
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                  <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div>
+                  <h2 class="font-heading font-bold text-lg text-slate-900 dark:text-white">Upcoming Assignments</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Track deadlines, problem sheets and submit coursework</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg text-xs self-start sm:self-auto">
+                <button onclick="filterAssignments('all')" id="asg-filter-all" class="px-2.5 py-1 rounded-md font-semibold bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-400 shadow-sm">All</button>
+                <button onclick="filterAssignments('pending')" id="asg-filter-pending" class="px-2.5 py-1 rounded-md font-medium text-slate-600 dark:text-slate-400">Pending</button>
+                <button onclick="filterAssignments('submitted')" id="asg-filter-submitted" class="px-2.5 py-1 rounded-md font-medium text-slate-600 dark:text-slate-400">Submitted</button>
+              </div>
+            </div>
+
+            <div class="space-y-3" id="assignments-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right 1 Col: Deadlines & Checklist Preview -->
+        <div class="space-y-6">
+          
+          <!-- Deadlines -->
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 flex items-center justify-center">
+                  <i class="fa-regular fa-clock"></i>
+                </div>
+                <div>
+                  <h2 class="font-heading font-bold text-base text-slate-900 dark:text-white">Important Deadlines</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Forms, fees & registrations</p>
+                </div>
+              </div>
+              <span class="text-xs font-semibold text-brand-600 dark:text-brand-400">4 Active</span>
+            </div>
+
+            <div class="space-y-3" id="deadlines-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Fresher Onboarding Progress -->
+          <div class="glass-card rounded-2xl p-6 border-l-4 border-l-brand-500">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-heading font-bold text-sm text-slate-900 dark:text-white flex items-center space-x-2">
+                <i class="fa-solid fa-clipboard-check text-brand-500"></i>
+                <span>Fresher Onboarding Checklist</span>
+              </h3>
+              <span id="checklist-progress-text" class="text-xs font-bold text-brand-600 dark:text-brand-400">3/7 Done</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden mb-3">
+              <div id="checklist-progress-bar" class="bg-brand-500 h-full rounded-full transition-all duration-300" style="width: 43%;"></div>
+            </div>
+            <div id="checklist-preview-list" class="space-y-2 text-xs">
+              <!-- Rendered via JS -->
+            </div>
+            <button onclick="navigateTo('toolkit')" class="mt-4 w-full py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 transition text-center block">
+              Open Full Fresher Checklist &rarr;
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. ASK CAMPUSBUDDY AI -->
+    <!-- ========================================== -->
+    <section id="section-ask" class="app-section hidden space-y-6">
+      
+      <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-4xl mx-auto shadow-xl">
+        
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 gap-4">
+          <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-purple-500 flex items-center justify-center text-white text-xl shadow-lg shadow-brand-500/30">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <h2 class="font-heading font-extrabold text-xl text-slate-900 dark:text-white">Ask CampusBuddy</h2>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
+                  ● 24/7 AI Assistant
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Ask any question about academics, facilities, clubs, timings, or Wi-Fi setup.</p>
+            </div>
+          </div>
+
+          <button onclick="clearChatHistory()" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center space-x-1.5 self-start sm:self-auto">
+            <i class="fa-regular fa-trash-can"></i><span>Clear Chat</span>
+          </button>
+        </div>
+
+        <!-- Preset Chips -->
+        <div class="py-4">
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">Try asking one of these popular fresher questions:</p>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="askQuestionPreset('Where is the library?')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-950/60 dark:hover:text-brand-300 border border-slate-200 dark:border-slate-700 text-xs font-medium transition">
+              📍 "Where is the library?"
+            </button>
+            <button onclick="askQuestionPreset('How can I join a club?')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-950/60 dark:hover:text-brand-300 border border-slate-200 dark:border-slate-700 text-xs font-medium transition">
+              🎪 "How can I join a club?"
+            </button>
+            <button onclick="askQuestionPreset('When is my next assignment due?')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-950/60 dark:hover:text-brand-300 border border-slate-200 dark:border-slate-700 text-xs font-medium transition">
+              ⏳ "When is my next assignment due?"
+            </button>
+            <button onclick="askQuestionPreset('How to setup campus Wi-Fi?')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-950/60 dark:hover:text-brand-300 border border-slate-200 dark:border-slate-700 text-xs font-medium transition">
+              📶 "How to setup campus Wi-Fi?"
+            </button>
+            <button onclick="askQuestionPreset('Where is the central canteen?')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-950/60 dark:hover:text-brand-300 border border-slate-200 dark:border-slate-700 text-xs font-medium transition">
+              🍔 "Where is the canteen & mess timings?"
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div id="chat-messages-container" class="space-y-4 min-h-[360px] max-h-[480px] overflow-y-auto p-4 bg-slate-50/50 dark:bg-slate-900/40 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+          <!-- Messages -->
+        </div>
+
+        <!-- Input -->
+        <form id="chat-form" onsubmit="handleChatSubmit(event)" class="mt-4 relative flex items-center">
+          <input 
+            type="text" 
+            id="chat-input" 
+            placeholder="Ask anything... (e.g. 'Where is LHC 101?' or 'What are gym timings?')" 
+            class="w-full pl-4 pr-24 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 shadow-sm"
+            autocomplete="off"
+          >
+          <button 
+            type="submit" 
+            class="absolute right-2 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition flex items-center space-x-1.5 shadow-md shadow-brand-500/20"
+          >
+            <span>Ask</span>
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+          </button>
+        </form>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. SENIOR CONNECT -->
+    <!-- ========================================== -->
+    <section id="section-seniors" class="app-section hidden space-y-6">
+      
+      <!-- Hero -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-500/30 text-brand-300 border border-brand-500/40 mb-3">
+            <i class="fa-solid fa-shield-halved mr-1.5 text-xs"></i> Verified Senior Mentorship
+          </span>
+          <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-white">Find Your Senior Mentor</h2>
+          <p class="mt-2 text-sm text-slate-300">
+            Get personalized guidance from top-performing 3rd & 4th year seniors who have navigated the exact same courses, hackathons, and placement preparations.
+          </p>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="relative flex-1 max-w-md">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+            <input 
+              type="text" 
+              id="senior-search-input" 
+              oninput="applySeniorFilters()"
+              placeholder="Search senior by name, skill, or achievement..." 
+              class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            >
+          </div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            Showing <span id="seniors-count" class="font-bold text-brand-600 dark:text-brand-400">6</span> verified mentors
+          </div>
+        </div>
+
+        <!-- Branch Chips -->
+        <div>
+          <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Filter by Branch:</p>
+          <div class="flex flex-wrap gap-2" id="senior-branch-filters">
+            <button onclick="setSeniorBranchFilter('All')" class="filter-chip active px-3 py-1 rounded-lg text-xs font-semibold bg-brand-600 text-white">All Branches</button>
+            <button onclick="setSeniorBranchFilter('Computer Science')" class="filter-chip px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400">Computer Science</button>
+            <button onclick="setSeniorBranchFilter('Electronics (ECE)')" class="filter-chip px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400">Electronics (ECE)</button>
+            <button onclick="setSeniorBranchFilter('Mechanical')" class="filter-chip px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400">Mechanical</button>
+            <button onclick="setSeniorBranchFilter('Information Technology')" class="filter-chip px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400">Information Technology</button>
+            <button onclick="setSeniorBranchFilter('Biotechnology')" class="filter-chip px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400">Biotechnology</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seniors Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="seniors-grid">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- My Bookings -->
+      <div id="my-connections-box" class="glass-card rounded-2xl p-6 border-t-4 border-t-emerald-500">
+        <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white flex items-center space-x-2">
+          <i class="fa-solid fa-circle-check text-emerald-500"></i>
+          <span>My Requested 1-on-1 Mentorship Sessions</span>
+        </h3>
+        <div id="my-connections-list" class="mt-3 divide-y divide-slate-100 dark:divide-slate-800">
+          <p class="text-xs text-slate-500 py-3 italic">You haven't requested any mentorship sessions yet. Click "Connect" on any mentor card above!</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. CAMPUS GUIDE -->
+    <!-- ========================================== -->
+    <section id="section-guide" class="app-section hidden space-y-6">
+      
+      <div class="glass-card rounded-3xl p-6 overflow-hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+          <div>
+            <h2 class="font-heading font-bold text-xl text-slate-900 dark:text-white flex items-center space-x-2">
+              <i class="fa-solid fa-map-location-dot text-brand-500"></i>
+              <span>Interactive Campus Guide & Map</span>
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Click any location pin on the map or select a card below to view floor guides and timings.</p>
+          </div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">
+            <i class="fa-solid fa-location-crosshairs mr-1.5"></i> 6 Key Landmarks Mapped
+          </span>
+        </div>
+
+        <!-- SVG Map Blueprint -->
+        <div class="map-container relative w-full h-80 sm:h-96 rounded-2xl shadow-inner border border-slate-700 flex items-center justify-center">
+          <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 800 500">
+            <defs>
+              <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+            
+            <path d="M 400 480 L 400 200 L 250 200 L 250 100" stroke="#334155" stroke-width="24" stroke-linecap="round" fill="none"/>
+            <path d="M 400 320 L 650 320 L 650 150" stroke="#334155" stroke-width="20" stroke-linecap="round" fill="none"/>
+            <path d="M 150 360 L 400 360" stroke="#334155" stroke-width="16" stroke-linecap="round" fill="none"/>
+            
+            <path d="M 400 480 L 400 200 L 250 200 L 250 100" stroke="#64748b" stroke-width="2" stroke-dasharray="6,6" fill="none"/>
+            <path d="M 400 320 L 650 320 L 650 150" stroke="#64748b" stroke-width="2" stroke-dasharray="6,6" fill="none"/>
+
+            <rect x="360" y="130" width="80" height="50" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,4"/>
+            <text x="400" y="160" fill="#94a3b8" font-size="11" font-weight="bold" text-anchor="middle">Central Quad</text>
+            
+            <circle cx="650" cy="150" r="45" fill="#064e3b" opacity="0.6" stroke="#10b981" stroke-width="1.5"/>
+            <text x="650" y="155" fill="#a7f3d0" font-size="10" text-anchor="middle">Athletics Ground</text>
+
+            <circle cx="160" cy="360" r="35" fill="#450a0a" opacity="0.6" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="160" y="365" fill="#fca5a5" font-size="10" text-anchor="middle">Health Plaza</text>
+
+            <rect x="340" y="470" width="120" height="24" rx="4" fill="#4f46e5"/>
+            <text x="400" y="486" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">MAIN ENTRANCE GATE</text>
+          </svg>
+
+          <!-- Interactive Pins -->
+          <div id="map-pins-container" class="absolute inset-0 pointer-events-auto"></div>
+
+          <div class="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700 text-[10px] text-slate-300 flex items-center space-x-3">
+            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 mr-1"></span> Academic</span>
+            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-amber-500 mr-1"></span> Canteen</span>
+            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1"></span> Sports</span>
+            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-purple-500 mr-1"></span> Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories & Route guide -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap gap-2" id="location-category-filters">
+          <button onclick="filterLocations('All')" class="loc-filter-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white">All Locations</button>
+          <button onclick="filterLocations('Academic')" class="loc-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">Academic & Labs</button>
+          <button onclick="filterLocations('Food & Hangout')" class="loc-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">Canteens & Food</button>
+          <button onclick="filterLocations('Sports & Fitness')" class="loc-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">Sports & Gym</button>
+          <button onclick="filterLocations('Administration')" class="loc-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">Administration</button>
+        </div>
+
+        <button onclick="openRouteModal()" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-diamond-turn-right"></i>
+          <span>Campus Route Guide</span>
+        </button>
+      </div>
+
+      <!-- Locations Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="locations-grid">
+        <!-- Rendered via JS -->
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 5. IMPORTANT NOTICES -->
+    <!-- ========================================== -->
+    <section id="section-notices" class="app-section hidden space-y-6">
+      
+      <div class="glass-card rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center space-x-2 mb-1">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300">
+              OFFICIAL BULLETIN
+            </span>
+            <span class="text-xs text-slate-400">Updated today</span>
+          </div>
+          <h2 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 dark:text-white">College Circulars & Notices</h2>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">All administrative, academic and student life notifications in one unified stream.</p>
+        </div>
+
+        <div class="relative w-full sm:w-72">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+          <input 
+            type="text" 
+            id="notice-search-input" 
+            oninput="applyNoticeFilters()"
+            placeholder="Search circulars by keyword..." 
+            class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500"
+          >
+        </div>
+      </div>
+
+      <div class="space-y-4" id="notices-list-container">
+        <!-- Rendered via JS -->
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 6. FRESHER TOOLKIT -->
+    <!-- ========================================== -->
+    <section id="section-toolkit" class="app-section hidden space-y-6">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="lg:col-span-2 space-y-6">
+          
+          <!-- Full Checklist -->
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-lg">
+                  <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div>
+                  <h2 class="font-heading font-bold text-lg text-slate-900 dark:text-white">First Month Survival Checklist</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Essential onboarding milestones for first-year students</p>
+                </div>
+              </div>
+              <span id="toolkit-checklist-count" class="text-xs font-bold px-2.5 py-1 rounded-full bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300">
+                3 of 7 Done
+              </span>
+            </div>
+
+            <div class="space-y-2.5" id="full-checklist-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Mess Menu -->
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg">
+                  <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div>
+                  <h2 class="font-heading font-bold text-lg text-slate-900 dark:text-white">Today's Hostel Mess Menu</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Undergraduate Central Dining Hall • Rotating Menu</p>
+                </div>
+              </div>
+              <span class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">● Live Serving Schedule</span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+              <button onclick="setMessMeal('breakfast')" id="meal-tab-breakfast" class="meal-tab-btn active p-3 rounded-xl bg-amber-500 text-white text-center transition">
+                <p class="text-[11px] opacity-80">07:15 - 09:30 AM</p>
+                <p class="font-bold text-sm">Breakfast</p>
+              </button>
+              <button onclick="setMessMeal('lunch')" id="meal-tab-lunch" class="meal-tab-btn p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-center transition">
+                <p class="text-[11px] text-slate-400">12:15 - 02:15 PM</p>
+                <p class="font-bold text-sm">Lunch</p>
+              </button>
+              <button onclick="setMessMeal('snacks')" id="meal-tab-snacks" class="meal-tab-btn p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-center transition">
+                <p class="text-[11px] text-slate-400">05:00 - 06:15 PM</p>
+                <p class="font-bold text-sm">Evening Tea</p>
+              </button>
+              <button onclick="setMessMeal('dinner')" id="meal-tab-dinner" class="meal-tab-btn p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-center transition">
+                <p class="text-[11px] text-slate-400">07:30 - 09:45 PM</p>
+                <p class="font-bold text-sm">Dinner</p>
+              </button>
+            </div>
+
+            <div id="mess-meal-content" class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Emergency Helplines -->
+        <div class="space-y-6">
+          <div class="glass-card rounded-2xl p-6 border-t-4 border-t-red-500">
+            <div class="flex items-center space-x-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 flex items-center justify-center text-lg">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div>
+                <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white">Emergency Helplines</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Instant 24/7 assistance & student safety</p>
+              </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <div class="p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 flex items-center justify-between">
+                <div>
+                  <p class="font-bold text-red-900 dark:text-red-200">Campus Ambulance & Clinic</p>
+                  <p class="text-slate-600 dark:text-slate-400">Ext: 2222 (Intercom) / 24x7 Doctor</p>
+                </div>
+                <a href="tel:01126596666" class="px-2.5 py-1.5 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 transition">
+                  <i class="fa-solid fa-phone mr-1"></i> Call
+                </a>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <p class="font-bold text-slate-800 dark:text-slate-200">Anti-Ragging Squad Helpline</p>
+                  <p class="text-slate-500">1800-180-5522 (Toll Free, Anonymous)</p>
+                </div>
+                <a href="tel:18001805522" class="px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-300 transition">
+                  <i class="fa-solid fa-phone mr-1"></i> Call
+                </a>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <p class="font-bold text-slate-800 dark:text-slate-200">Main Campus Security Desk</p>
+                  <p class="text-slate-500">Gate 1 Desk / 011-2659-1000</p>
+                </div>
+                <a href="tel:01126591000" class="px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-300 transition">
+                  <i class="fa-solid fa-phone mr-1"></i> Call
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- CONTACT SUPPORT -->
+    <!-- ========================================== -->
+    <section class="mt-8 border-t border-slate-200 dark:border-slate-800 pt-6">
+      <div class="glass-card rounded-2xl p-6 text-center">
+        <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-white mb-2">Need Help? Contact Support</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">If you are facing any issues with the platform, feel free to reach out.</p>
+        <a href="mailto:adityalovespatna0106@gmail.com" class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition">
+          <i class="fa-solid fa-envelope mr-2"></i> adityalovespatna0106@gmail.com
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODALS -->
+  <!-- ========================================== -->
+
+  <!-- Senior Connect Modal -->
+  <div id="modal-mentor-connect" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-backdrop animate-fade-in">
+    <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center space-x-3">
+          <img id="modal-mentor-avatar" src="" class="w-10 h-10 rounded-full object-cover ring-2 ring-brand-500">
+          <div>
+            <h3 id="modal-mentor-name" class="font-heading font-bold text-base text-slate-900 dark:text-white"></h3>
+            <p id="modal-mentor-branch" class="text-xs text-slate-500 dark:text-slate-400"></p>
+          </div>
+        </div>
+        <button onclick="closeMentorModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleMentorBooking(event)" class="mt-4 space-y-4">
+        <input type="hidden" id="modal-mentor-id">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">What would you like guidance on?</label>
+          <select id="modal-mentor-topic" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            <option value="DSA & 1st Year Coding Roadmap">DSA & 1st Year Coding Roadmap</option>
+            <option value="Joining Technical Clubs & Hackathons">Joining Technical Clubs & Hackathons</option>
+            <option value="Balancing Academics & CGPA">Balancing Academics & Maintaining 9+ CGPA</option>
+            <option value="Internships & Career Guidance">1st/2nd Year Internships & Project Advice</option>
+            <option value="General Fresher Mentorship">General Fresher Advice & Campus Life</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Select an Available Slot:</label>
+          <select id="modal-mentor-slot" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Your Question or Note (Optional):</label>
+          <textarea id="modal-mentor-note" rows="3" placeholder="Hi! I am a 1st year student looking to prepare for upcoming hackathons..." class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2">
+          <button type="button" onclick="closeMentorModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition shadow-md">
+            Confirm 1-on-1 Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notice Reader Modal -->
+  <div id="modal-notice-view" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-backdrop animate-fade-in">
+    <div class="glass-panel w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center space-x-2">
+          <span id="modal-notice-badge" class="px-2 py-0.5 rounded text-[10px] font-bold"></span>
+          <span id="modal-notice-date" class="text-xs text-slate-400"></span>
+        </div>
+        <button onclick="closeNoticeModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-3">
+        <h3 id="modal-notice-title" class="font-heading font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white leading-snug"></h3>
+        <p id="modal-notice-source" class="text-xs text-brand-600 dark:text-brand-400 font-semibold"></p>
+        <p id="modal-notice-ref" class="text-[11px] font-mono text-slate-400"></p>
+        <div id="modal-notice-content" class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line py-3 leading-relaxed border-y border-slate-100 dark:border-slate-800/80"></div>
+        
+        <div class="p-3 rounded-xl bg-slate-100 dark:bg-slate-900 flex items-center justify-between text-xs">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-paperclip text-brand-500"></i>
+            <span id="modal-notice-attachment" class="font-semibold text-slate-700 dark:text-slate-300"></span>
+            <span id="modal-notice-size" class="text-slate-400 text-[10px]"></span>
+          </div>
+          <button onclick="showToast('Downloaded official attachment PDF!');" class="px-3 py-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs">Download</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Route Guide Modal -->
+  <div id="modal-route-guide" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-backdrop animate-fade-in">
+    <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white flex items-center space-x-2">
+          <i class="fa-solid fa-diamond-turn-right text-brand-500"></i>
+          <span>Campus Route Guide</span>
+        </h3>
+        <button onclick="closeRouteModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Starting From:</label>
+          <select id="route-start" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700">
+            <option value="Main Entrance Gate">Main Entrance Gate</option>
+            <option value="Hostel Blocks">Hostel Blocks (A-D)</option>
+            <option value="Central Quad">Central Academic Quadrangle</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Destination:</label>
+          <select id="route-dest" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700">
+            <option value="loc-library">Central Library & Digital Knowledge Hub</option>
+            <option value="loc-canteen">Central Canteen & Nescafe Food Court</option>
+            <option value="loc-acad1">Academic Block 1 (LHC 101 & 102)</option>
+            <option value="loc-sports">Indoor Sports Complex & Athletics Arena</option>
+            <option value="loc-admin">Administration Block (Counter 4)</option>
+            <option value="loc-health">Campus Health & Wellness Center</option>
+          </select>
+        </div>
+
+        <button onclick="calculateRouteDirections()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold">
+          Get Walking Directions
+        </button>
+
+        <div id="route-results-box" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 space-y-2 hidden">
+          <p class="font-bold text-brand-600 dark:text-brand-400" id="route-result-title"></p>
+          <p id="route-result-steps" class="leading-relaxed"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Search Modal (Ctrl + K) -->
+  <div id="modal-global-search" class="fixed inset-0 z-50 hidden flex items-start justify-center p-4 pt-16 modal-backdrop animate-fade-in">
+    <div class="glass-panel w-full max-w-xl rounded-3xl p-4 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="relative flex items-center">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-slate-400"></i>
+        <input 
+          type="text" 
+          id="global-search-input" 
+          oninput="handleGlobalSearchInput(this.value)"
+          placeholder="Search courses, mentors, buildings, or ask a question..." 
+          class="w-full pl-10 pr-10 py-3 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          autocomplete="off"
+        >
+        <button onclick="closeGlobalSearch()" class="absolute right-3 text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="mt-4 max-h-72 overflow-y-auto space-y-2 text-xs" id="global-search-results">
+        <p class="text-slate-400 text-center py-4">Type to instantly search across all CampusBuddy resources...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- Scripts -->
+  <script>
+// CampusBuddy Realistic Sample Data
+const CAMPUS_DATA = {
+  student: {
+    name: "Aarav Sharma",
+    rollNo: "26BCSE1042",
+    branch: "Computer Science & Engineering",
+    section: "B",
+    year: "1st Year (Fresher)",
+    semester: "Semester 1",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    attendance: 91,
+    creditsEnrolled: 22,
+    campusIdStatus: "Verified",
+    hostelRoom: "Block B - Room 314",
+    advisor: "Dr. Sunita Raman (Dept. of CSE)"
+  },
+
+  schedule: [
+    {
+      id: 1,
+      code: "CS101",
+      name: "Intro to Programming & Problem Solving",
+      type: "Theory Lecture",
+      instructor: "Prof. Rajesh Verma",
+      time: "09:00 AM - 10:30 AM",
+      venue: "Lecture Hall Complex (LHC-102)",
+      status: "completed",
+      attendance: "Present (94%)",
+      color: "blue",
+      roomLink: "loc-acad1"
+    },
+    {
+      id: 2,
+      code: "MA101",
+      name: "Calculus & Linear Algebra",
+      type: "Theory Lecture",
+      instructor: "Dr. K. N. Rao",
+      time: "10:45 AM - 12:15 PM",
+      venue: "Academic Block 1 - Room 204",
+      status: "active",
+      attendance: "In Session Now",
+      color: "emerald",
+      roomLink: "loc-acad1"
+    },
+    {
+      id: 3,
+      code: "PH101",
+      name: "Applied Physics Lab",
+      type: "Practical / Lab",
+      instructor: "Dr. Ananya Sen & TAs",
+      time: "02:00 PM - 04:30 PM",
+      venue: "Science Complex, Physics Lab C",
+      status: "upcoming",
+      attendance: "Up Next",
+      color: "purple",
+      roomLink: "loc-acad1"
+    },
+    {
+      id: 4,
+      code: "HS101",
+      name: "Technical Communication & Ethics",
+      type: "Tutorial / Workshop",
+      instructor: "Prof. David Vance",
+      time: "04:45 PM - 05:45 PM",
+      venue: "Humanities Block - Seminar Hall 2",
+      status: "upcoming",
+      attendance: "Upcoming",
+      color: "amber",
+      roomLink: "loc-acad1"
+    }
+  ],
+
+  assignments: [
+    {
+      id: "asg-1",
+      title: "Data Structures & Array Pointers Lab Sheet #3",
+      course: "CS101 - Intro to Programming",
+      dueDate: "Tomorrow, 11:59 PM",
+      dueInDays: 1,
+      urgency: "urgent",
+      weightage: "5% of Internal Grade",
+      submitted: false,
+      format: "PDF / C++ Source Archive",
+      description: "Implement dynamic 2D matrices and pointer arithmetic functions with comprehensive test cases and complexity analysis."
+    },
+    {
+      id: "asg-2",
+      title: "Eigenvalues & Diagonalization Problem Set",
+      course: "MA101 - Calculus & Algebra",
+      dueDate: "Aug 26, 2026 (In 4 days)",
+      dueInDays: 4,
+      urgency: "warning",
+      weightage: "10 Marks Assignment",
+      submitted: false,
+      format: "Handwritten Scan PDF",
+      description: "Solve problems 1-15 from Chapter 4 of Kreyszig Advanced Engineering Math covering orthogonal matrices."
+    },
+    {
+      id: "asg-3",
+      title: "Diffraction Spectrometer Experiment Lab Report",
+      course: "PH101 - Applied Physics",
+      dueDate: "Aug 28, 2026",
+      dueInDays: 6,
+      urgency: "normal",
+      weightage: "Lab Manual Grade",
+      submitted: false,
+      format: "Hardcopy submission at Physics Lab",
+      description: "Calculate grating pitch and wavelength dispersion with error analysis graphs and signature of lab TA."
+    },
+    {
+      id: "asg-4",
+      title: "Resume & Professional Bio Drafting",
+      course: "HS101 - Technical Communication",
+      dueDate: "Aug 20, 2026",
+      dueInDays: -2,
+      urgency: "normal",
+      weightage: "Internal Assessment",
+      submitted: true,
+      format: "PDF on Moodle",
+      description: "Peer-reviewed introductory professional profile and executive summary for college career cell."
+    }
+  ],
+
+  deadlines: [
+    {
+      id: "dl-1",
+      title: "Minor Exam 1 Course Audit & Elective Verification",
+      category: "Academic",
+      date: "Aug 25, 2026",
+      timeRemaining: "3 days left",
+      urgent: true,
+      badge: "High Priority",
+      actionText: "Verify on ERP Portal"
+    },
+    {
+      id: "dl-2",
+      title: "Physical RFID Campus Smart Card Collection",
+      category: "Administration",
+      date: "Aug 27, 2026",
+      timeRemaining: "5 days left",
+      urgent: false,
+      badge: "Admin Desk",
+      actionText: "Counter 4, Admin Block"
+    },
+    {
+      id: "dl-3",
+      title: "Fresher Club Inductions & Audition Signups",
+      category: "Student Life",
+      date: "Aug 31, 2026",
+      timeRemaining: "9 days left",
+      urgent: false,
+      badge: "Societies",
+      actionText: "Explore Clubs"
+    },
+    {
+      id: "dl-4",
+      title: "Institute Merit-cum-Means Scholarship Form Submission",
+      category: "Finance & Aid",
+      date: "Sep 05, 2026",
+      timeRemaining: "14 days left",
+      urgent: false,
+      badge: "Financial Aid",
+      actionText: "Download Application"
+    }
+  ],
+
+  seniors: [
+    {
+      id: "sn-1",
+      name: "Priya Sundaram",
+      year: "4th Year (Senior)",
+      branch: "Computer Science",
+      cgpa: "9.4 / 10",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+      verified: true,
+      badge: "Google Summer of Code '25 • Placed @ Microsoft",
+      bio: "President of Open Source Society. Helped 150+ freshers crack competitive coding, git workflows and hackathons. Ping me for 1st-year DSA roadmaps!",
+      interests: ["Coding", "Hackathons", "Placements", "Web3 & AI"],
+      availability: "🟢 Free this weekend",
+      slots: ["Sat 4:00 PM - 5:00 PM", "Sun 11:00 AM - 12:00 PM", "Sun 6:00 PM - 7:00 PM"],
+      contactEmail: "priya.s@campus.edu"
+    },
+    {
+      id: "sn-2",
+      name: "Rohan Mukherjee",
+      year: "3rd Year",
+      branch: "Electronics (ECE)",
+      cgpa: "8.9 / 10",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      verified: true,
+      badge: "Lead, IEEE Robotics • Smart India Hackathon Winner",
+      bio: "Passionate about Embedded Systems, IoT, Arduino and Drone Robotics. Can help you balance ECE lab coursework with core technical hardware projects.",
+      interests: ["Robotics", "Hardware & IoT", "Hackathons", "Higher Studies"],
+      availability: "🟢 Available Weekday Evenings",
+      slots: ["Mon 6:30 PM", "Wed 7:00 PM", "Fri 6:00 PM"],
+      contactEmail: "rohan.m@campus.edu"
+    },
+    {
+      id: "sn-3",
+      name: "Ananya Deshmukh",
+      year: "4th Year (Senior)",
+      branch: "Mechanical",
+      cgpa: "9.1 / 10",
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+      verified: true,
+      badge: "Captain, Formula Student Racing • GRE 332",
+      bio: "CAD/CAM geek and automotive enthusiast. Planning MS in Aerospace. Love guiding juniors on joining core engineering teams & international research exchanges.",
+      interests: ["Higher Studies", "Robotics", "Design & 3D", "Placements"],
+      availability: "🟡 Quick Email Response",
+      slots: ["Tue 5:00 PM", "Thu 5:00 PM", "Sat 2:00 PM"],
+      contactEmail: "ananya.d@campus.edu"
+    },
+    {
+      id: "sn-4",
+      name: "Karan Singhal",
+      year: "3rd Year",
+      branch: "Information Technology",
+      cgpa: "9.2 / 10",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      verified: true,
+      badge: "Convener, EDC (E-Cell) • Founder @ EdStart",
+      bio: "Passionate about building startup MVPs, pitch decks, and landing paid internships in 1st/2nd year. Happy to review your resumes and ideas!",
+      interests: ["Startups", "Web3 & AI", "Coding", "Public Speaking"],
+      availability: "🟢 Active Today",
+      slots: ["Daily 8:00 PM - 9:00 PM", "Weekend 3:00 PM"],
+      contactEmail: "karan.s@campus.edu"
+    },
+    {
+      id: "sn-5",
+      name: "Sneha Nair",
+      year: "4th Year (Senior)",
+      branch: "Biotechnology",
+      cgpa: "9.5 / 10",
+      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+      verified: true,
+      badge: "Published in Nature SciRep • Harvard Research Intern",
+      bio: "Specializing in Computational Biology and Genetics. If you feel overwhelmed about wet-labs, bio-informatics or research scholarships, let's chat!",
+      interests: ["Higher Studies", "Research & Labs", "Public Speaking"],
+      availability: "🟢 Free on Sundays",
+      slots: ["Sun 10:00 AM", "Sun 4:00 PM"],
+      contactEmail: "sneha.n@campus.edu"
+    },
+    {
+      id: "sn-6",
+      name: "Tanmay Bhatia",
+      year: "3rd Year",
+      branch: "Computer Science",
+      cgpa: "8.8 / 10",
+      avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80",
+      verified: true,
+      badge: "Codeforces Candidate Master • ICPC Regionalist",
+      bio: "Competitive programming coach. Can help you break through 1400+ rating barriers on LeetCode/Codeforces and build solid problem-solving discipline.",
+      interests: ["Coding", "Hackathons", "Placements"],
+      availability: "🟡 Coffee chats at Nescafe",
+      slots: ["Sat 5:00 PM (Nescafe)", "Sun 3:00 PM (Central Library)"],
+      contactEmail: "tanmay.b@campus.edu"
+    }
+  ],
+
+  campusLocations: [
+    {
+      id: "loc-library",
+      name: "Central Library & Digital Knowledge Hub",
+      category: "Academic",
+      icon: "fa-book-open",
+      floorInfo: "3 Floors (Ground, 1st & 2nd Floor)",
+      timings: "8:00 AM - 11:00 PM (24/7 during exams)",
+      location: "Behind Main Academic Quadrangle (Block 1)",
+      image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&auto=format&fit=crop&q=80",
+      facilities: [
+        "Quiet Reading Halls with 500+ individual charging pods",
+        "Digital Research Lab & IEEE / ACM Journal Terminals",
+        "Automated RFID Book Issue & Return Kiosk",
+        "Group Discussion Rooms (Bookable via portal)"
+      ],
+      tip: "Ground floor has quiet study cubicles; 2nd floor has high-speed Wi-Fi and discussion rooms.",
+      coordinates: { x: 50, y: 32 },
+      directionsFromGate: "Walk straight 150m past the Flag Plaza, take the right walkway behind Academic Block 1."
+    },
+    {
+      id: "loc-canteen",
+      name: "Central Canteen & Nescafe Food Court",
+      category: "Food & Hangout",
+      icon: "fa-utensils",
+      floorInfo: "Open Courtyard & AC Seating Wing",
+      timings: "7:30 AM - 10:30 PM",
+      location: "Next to Student Activity Center (SAC) & Lawn 2",
+      image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop&q=80",
+      facilities: [
+        "Multi-cuisine Food Stalls (Dosa, Thali, Chinese, Rolls, Chaat)",
+        "Nescafe Express Bar with iced frappe & grilled sandwiches",
+        "Large shaded gazebo seating with music lounge",
+        "All UPI & Student RFID Smart Card payments accepted"
+      ],
+      tip: "Peak rush is 12:30 PM - 1:45 PM. The Maggi and cold coffee corner behind SAC is a fresher favorite!",
+      coordinates: { x: 70, y: 55 },
+      directionsFromGate: "From main gate, follow the central boulevard towards the left of the sports grounds."
+    },
+    {
+      id: "loc-acad1",
+      name: "Academic Block 1 & Lecture Theatre Complex",
+      category: "Academic",
+      icon: "fa-building-columns",
+      floorInfo: "Ground to 4th Floor (LHC 101 - 308)",
+      timings: "8:00 AM - 7:00 PM",
+      location: "Directly opposite Main University Entrance Gate",
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=80",
+      facilities: [
+        "Stepped Smart Lecture Theatres with dual interactive screens",
+        "Central Computing Center (CCC) with 300 Linux/Win terminals",
+        "Faculty Cabins & Teaching Assistant Consultation Desks",
+        "Filtered Water Stations and Lift access on all wings"
+      ],
+      tip: "All 1st Year CSE, ECE & Common Theory Lectures happen in LHC-101 and LHC-102.",
+      coordinates: { x: 32, y: 38 },
+      directionsFromGate: "Located immediately inside the Main Entrance Gate, right hand side."
+    },
+    {
+      id: "loc-sports",
+      name: "Indoor Sports Complex & Athletics Arena",
+      category: "Sports & Fitness",
+      icon: "fa-dumbbell",
+      floorInfo: "Indoor Stadium & Outdoor Floodlit Courts",
+      timings: "6:00 AM - 9:00 AM & 4:30 PM - 9:30 PM",
+      location: "East Wing, adjacent to Boys Hostel 3 & 4",
+      image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop&q=80",
+      facilities: [
+        "4 Wooden Badminton Courts & 6 Table Tennis Tables",
+        "Olympic Swimming Pool with certified lifeguards",
+        "Modern Gym & Strength Training Wing with trainers",
+        "Floodlit Basketball, Volleyball & Lawn Tennis courts"
+      ],
+      tip: "Gym registration for freshers is free for the first semester! Bring 2 photos and ID card.",
+      coordinates: { x: 82, y: 30 },
+      directionsFromGate: "Take the east ring road for 300m, located right past the cafeteria lawn."
+    },
+    {
+      id: "loc-admin",
+      name: "Administration Block (Registrar & Dean Office)",
+      category: "Administration",
+      icon: "fa-landmark",
+      floorInfo: "Ground & 1st Floor (Counters 1 to 6)",
+      timings: "9:30 AM - 5:30 PM (Lunch: 1:30 PM - 2:30 PM)",
+      location: "Near Main Flag Plaza & Clock Tower",
+      image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80",
+      facilities: [
+        "Student Affairs & Dean Academics Office",
+        "Accounts & Scholarship Helpdesk (Counters 1-3)",
+        "Bonafide Certificate, Bus Pass & ID Card Dispenser (Counter 4)",
+        "Anti-Ragging Squad & Student Welfare Cell"
+      ],
+      tip: "Counter 4 handles ID cards and fee verification. Visit before 1:00 PM to avoid lines.",
+      coordinates: { x: 45, y: 68 },
+      directionsFromGate: "Walk 100m straight from the entrance gate towards the Clock Tower."
+    },
+    {
+      id: "loc-health",
+      name: "Campus Health & Wellness Center",
+      category: "Health & Support",
+      icon: "fa-heart-pulse",
+      floorInfo: "Ground Floor (Standalone Healthcare Clinic)",
+      timings: "24x7 Emergency Services • OPD: 9:00 AM - 8:00 PM",
+      location: "Behind Health Plaza, near Girls Hostel Complex",
+      image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&auto=format&fit=crop&q=80",
+      facilities: [
+        "Resident Medical Officers, Nurses & Pharmacist",
+        "Free consultations, basic medicines, and first-aid care",
+        "Dedicated 24/7 Campus Ambulance Service (Dial 108 / Ext: 2222)",
+        "Confidential Student Counseling & Mental Wellbeing Pods"
+      ],
+      tip: "Emergency Doctor Hotline: 011-2659-6666 (Direct speed dial from campus intercom: 2222).",
+      coordinates: { x: 20, y: 72 },
+      directionsFromGate: "Follow the West pathway past the Humanities block towards Girls Hostel Gate."
+    }
+  ],
+
+  notices: [
+    {
+      id: "ntc-1",
+      title: "Odd Semester 2026 Minor-1 Examination Schedule & Seating Matrix",
+      category: "Academic",
+      urgency: "urgent",
+      pinned: true,
+      date: "Aug 21, 2026",
+      source: "Office of Dean (Academic Courses)",
+      refNo: "CAMPUS/ACAD/2026/08/412",
+      summary: "Minor-1 exams for 1st Year UG will commence from September 10, 2026. Hall tickets and classroom seat allocations will be visible on the student portal.",
+      content: `The comprehensive schedule for Minor-1 Examinations for all 1st Year B.Tech and Dual Degree programs is hereby announced. Exams will be held in two sessions (Morning: 09:30 - 11:30 AM, Afternoon: 02:30 - 04:30 PM).
+
+Key Guidelines for First-Year Students:
+1. Students must carry their Physical RFID ID card or temporary registration slip.
+2. Smart watches, mobile devices, and programmable calculators are strictly prohibited.
+3. Seating allocation will be displayed on the notice boards outside LHC 101 and 102 30 minutes prior to exam start.`,
+      attachment: "Exam_Schedule_Minor1_2026.pdf",
+      attachmentSize: "1.4 MB"
+    },
+    {
+      id: "ntc-2",
+      title: "Clubs Carnival & Orientation Auditions: 'Aarohan 2026'",
+      category: "Events & Clubs",
+      urgency: "event",
+      pinned: true,
+      date: "Aug 20, 2026",
+      source: "Student Activity Center (SAC)",
+      refNo: "SAC/FEST/2026/03",
+      summary: "Annual Fresher Club Showcase on Aug 29-30 at the Main Amphitheatre. Register for Coding, Robotics, Drama, Music, Debate, and E-Cell.",
+      content: `Welcome Freshers! The Student Activity Center invites you to 'Aarohan 2026' - the annual fresher induction fair. Over 28 technical, cultural, and sports societies will showcase live projects, host mini-competitions, and conduct audition registrations.
+
+Highlights:
+- Tech Village: Robotics arena, drone demo, live AI hackathon teaser.
+- Cult Arena: Western music jam, theater auditions, photography gallery.
+- E-Cell Shark Tank: 60-second fresher pitch contest with seed prizes.`,
+      attachment: "Clubs_Directory_2026.pdf",
+      attachmentSize: "3.2 MB"
+    },
+    {
+      id: "ntc-3",
+      title: "Campus Wi-Fi MAC Registration & Microsoft Office 365 License Allocation",
+      category: "Campus IT",
+      urgency: "general",
+      pinned: false,
+      date: "Aug 19, 2026",
+      source: "Computer Services Center (CSC)",
+      refNo: "CSC/NET/2026/109",
+      summary: "Register your Laptop and Phone MAC addresses on the internal net portal to access campus-wide high-speed Eduroam / Campus-Wifi network.",
+      content: `All newly admitted students must register their device MAC addresses to access the campus high-speed network (Campus-WiFi and Eduroam).
+
+Steps for Registration:
+1. Connect to 'Campus-Setup-Guest' network on campus.
+2. Browse to https://netreg.campus.internal and login with your LDAP credentials (Roll No & initial password sent to your registered email).
+3. Add up to 3 devices per student. Wi-Fi will activate within 15 minutes.`,
+      attachment: "Wifi_Setup_Guide_Windows_Mac_Android.pdf",
+      attachmentSize: "850 KB"
+    },
+    {
+      id: "ntc-4",
+      title: "National Merit-cum-Means & State Scholarship Applications 2026-27",
+      category: "Scholarships",
+      urgency: "urgent",
+      pinned: false,
+      date: "Aug 17, 2026",
+      source: "Student Welfare & Scholarship Cell",
+      refNo: "SWC/SCH/2026/05",
+      summary: "Applications invited for full fee waivers, MCM financial aid, and corporate endowment scholarships. Last date for document submission: Sep 15.",
+      content: `Eligible first-year undergraduate students whose family annual income falls below the prescribed thresholds may apply for:
+1. Institute Merit-cum-Means (MCM) Scholarship (100% Tuition waiver + Monthly stipend).
+2. Central Sector Top Class Scholarship for SC/ST students.
+3. Alumni Benevolent Fund.
+
+Submit physical photocopies of Income Certificates and 12th Marksheets at Counter 2, Admin Block.`,
+      attachment: "Scholarship_Application_Guidelines.pdf",
+      attachmentSize: "2.1 MB"
+    },
+    {
+      id: "ntc-5",
+      title: "Revised Mess Timings & Weekend Late-Night Delivery Guidelines",
+      category: "Hostel & Mess",
+      urgency: "general",
+      pinned: false,
+      date: "Aug 15, 2026",
+      source: "Council of Wardens (Hostel Affairs)",
+      refNo: "COW/HOSTEL/2026/88",
+      summary: "Breakfast will now be served from 7:15 AM to 9:30 AM on weekdays. Food delivery riders are permitted up to Main Hostel Gate until 11:30 PM.",
+      content: `In response to student requests regarding morning 8:00 AM classes, breakfast timings across all undergraduate mess halls have been adjusted.
+
+New Meal Schedule:
+- Breakfast: 07:15 AM - 09:30 AM (Sundays: 07:45 AM - 10:00 AM)
+- Lunch: 12:15 PM - 02:15 PM
+- Evening Snacks: 05:00 PM - 06:15 PM
+- Dinner: 07:30 PM - 09:45 PM`,
+      attachment: "Hostel_Rules_2026.pdf",
+      attachmentSize: "500 KB"
+    }
+  ],
+
+  faqKnowledge: [
+    {
+      keywords: ["library", "where is library", "library timings", "books", "study room", "issue book", "reading"],
+      title: "Central Library Information & Timings",
+      response: `The **Central Library & Digital Knowledge Hub** is located centrally right behind the Main Academic Quadrangle (Block 1).
+
+🕒 **Opening Hours**:
+- Regular Days: **8:00 AM - 11:00 PM**
+- Exam Weeks: **Open 24/7 with midnight coffee kiosk**
+
+✨ **Fresher Tips**:
+- You can issue up to **4 books** for 14 days with your Student ID card.
+- Quiet study cubicles are on the **Ground Floor**, while discussion rooms and high-speed research terminals are on the **2nd Floor**.
+- Group discussion pods can be booked online via the library portal.`,
+      action: { type: "location", target: "loc-library", label: "📍 View Library on Campus Map" }
+    },
+    {
+      keywords: ["club", "join club", "clubs", "induction", "coding club", "robotics", "auditions", "societies", "aarohan", "extra curricular"],
+      title: "How to Join Clubs & Societies",
+      response: `Joining student clubs is the best way to build skills, make senior connections and have fun!
+
+🎪 **Upcoming Club Induction Carnival**:
+- The annual fresher orientation fair **'Aarohan 2026'** is happening on **Aug 29-30** at the Main Amphitheatre.
+- Over 28 technical, cultural, and entrepreneurship clubs will set up interactive booths.
+
+🚀 **Top Recommended Clubs for 1st Years**:
+1. **Open Source Society**: Weekly DSA, GitHub & WebDev workshops.
+2. **IEEE Robotics Club**: Hardware bot-building & drone navigation.
+3. **E-Cell**: Startup pitch battles, ideathons & angel network talks.
+4. **Music & Dramatics Society**: Acoustic sessions and stage plays.
+
+💡 **Want insider tips on club auditions?** Head over to **Senior Connect** to chat directly with club leads!`,
+      action: { type: "tab", target: "seniors", label: "👥 Talk to Club Leads in Senior Connect" }
+    },
+    {
+      keywords: ["assignment", "due", "homework", "next assignment", "deadline", "submission", "due date", "pending"],
+      title: "Your Upcoming Assignments & Deadlines",
+      response: `Here is a summary of your immediate academic deadlines:
+
+🔴 **Due Soonest (Tomorrow, 11:59 PM)**:
+- **CS101**: *Data Structures & Array Pointers Lab Sheet #3* (PDF / Code Archive)
+
+🟡 **Due in 4 Days (Aug 26, 2026)**:
+- **MA101**: *Eigenvalues & Diagonalization Problem Set* (10 Marks)
+
+🔵 **Due in 6 Days (Aug 28, 2026)**:
+- **PH101**: *Spectrometer Experiment Lab Report* (Hardcopy at Lab)
+
+Check the **Dashboard** tab to review full problem sheets and upload submissions!`,
+      action: { type: "tab", target: "dashboard", label: "📊 Open Dashboard Assignments" }
+    },
+    {
+      keywords: ["wifi", "wi-fi", "internet", "eduroam", "mac address", "password", "ldap", "lan"],
+      title: "Campus Wi-Fi & IT Setup Guide",
+      response: `Follow these 4 simple steps to connect your Laptop & Phone to high-speed campus Wi-Fi:
+
+1. **Connect to Setup Network**: Connect to \`Campus-Setup-Guest\` on your device.
+2. **Open Registration Portal**: Open your browser and go to \`netreg.campus.internal\`.
+3. **Login with LDAP Credentials**: Use your Roll Number (e.g. \`26BCSE1042\`) and default password from your welcome email.
+4. **Register MAC Address**: Add up to 3 devices per student.
+
+⚡ Access to **Campus-Secure** and **Eduroam** activates within 15 minutes!`,
+      action: { type: "notice", target: "ntc-3", label: "📢 Read Official Wi-Fi Notice" }
+    },
+    {
+      keywords: ["canteen", "food", "mess", "lunch", "dinner", "breakfast", "coffee", "nescafe", "hungry", "eat", "cafe"],
+      title: "Food, Canteen & Mess Timings",
+      response: `Looking for food? Here is the campus dining breakdown:
+
+🍔 **Central Canteen & Nescafe Food Court**:
+- Open **7:30 AM - 10:30 PM** (Located next to Student Activity Center).
+- Offers South Indian dosas, Thalis, rolls, Momos, Maggi, iced cold coffee and frappes.
+
+🍲 **Hostel Mess Timings**:
+- **Breakfast**: 07:15 AM - 09:30 AM
+- **Lunch**: 12:15 PM - 02:15 PM
+- **Evening Snacks**: 05:00 PM - 06:15 PM
+- **Dinner**: 07:30 PM - 09:45 PM
+
+🛵 Food delivery riders (Swiggy/Zomato) are allowed up to hostel gates until 11:30 PM.`,
+      action: { type: "location", target: "loc-canteen", label: "📍 Locate Canteen on Campus Map" }
+    },
+    {
+      keywords: ["doctor", "health", "hospital", "medical", "ambulance", "sick", "fever", "medicine", "emergency", "clinic"],
+      title: "Campus Health & Medical Emergency Support",
+      response: `The **Campus Health & Wellness Center** is open **24x7 for emergencies** and **9:00 AM - 8:00 PM for OPD**.
+
+🏥 **Location**: Behind Health Plaza, near Girls Hostel Complex.
+💊 **Services**: Free doctor consultation, emergency observation beds, free basic medications and wound dressing.
+
+🚨 **Emergency Contact Numbers**:
+- 🚑 Campus Ambulance: **011-2659-6666** (Intercom Speed Dial: **2222**)
+- 🛡️ 24/7 Security & Anti-Ragging Control: **011-2659-1000**`,
+      action: { type: "location", target: "loc-health", label: "📍 Locate Health Center" }
+    },
+    {
+      keywords: ["admin", "administration", "id card", "fee", "scholarship", "bonafide", "certificate", "dean", "counter"],
+      title: "Administration Block & Student Service Counters",
+      response: `The **Administration Block** is situated near the Main Flag Plaza & Clock Tower.
+
+🕒 **Working Hours**: Monday to Friday, **9:30 AM - 5:30 PM** (Lunch: 1:30 - 2:30 PM).
+
+🏢 **Counter Guide**:
+- **Counters 1 & 2**: Tuition fee receipts, bank DDs & Scholarship form submission.
+- **Counter 3**: Bonafide Certificates, railway concession & Grade sheet verification.
+- **Counter 4**: Smart RFID ID Card issues and duplicate card requests.`,
+      action: { type: "location", target: "loc-admin", label: "📍 View Admin Block Details" }
+    },
+    {
+      keywords: ["senior", "mentor", "guidance", "dsa", "coding", "placement", "internship", "roadmap", "advice"],
+      title: "Connect with Verified Senior Mentors",
+      response: `CampusBuddy has verified senior mentors from 3rd & 4th year across CSE, ECE, Mech, IT and Biotech!
+
+They can assist you with:
+- 🗺️ First-year roadmap & avoiding common academic traps
+- 💻 Mastering Data Structures, Algorithms & Competitive Coding
+- 🏆 Joining top technical clubs & winning hackathons
+- 💼 Securing summer internships and research fellowships
+
+👉 Click **Senior Connect** to filter mentors by branch and book a 1-on-1 slot!`,
+      action: { type: "tab", target: "seniors", label: "👥 Open Senior Connect" }
+    },
+    {
+      keywords: ["sports", "gym", "badminton", "pool", "swimming", "basketball", "fitness", "table tennis"],
+      title: "Sports Complex & Gym Facilities",
+      response: `The **Indoor Sports Complex & Athletics Arena** is open daily:
+- 🌅 Morning: **6:00 AM - 9:00 AM**
+- 🌇 Evening: **4:30 PM - 9:30 PM**
+
+Includes 4 Wooden Badminton Courts, Olympic Swimming Pool, Modern Gym, 6 Table Tennis tables, and floodlit basketball courts. Equipment can be issued using your Student ID!`,
+      action: { type: "location", target: "loc-sports", label: "📍 Sports Complex Info" }
+    }
+  ],
+
+  fresherChecklist: [
+    { id: "chk-1", text: "Collect RFID Smart Student ID Card from Admin Counter 4", done: true, category: "Essential" },
+    { id: "chk-2", text: "Register Laptop & Mobile MAC on campus Wi-Fi network", done: true, category: "IT Setup" },
+    { id: "chk-3", text: "Submit Anti-Ragging Undertaking on University portal", done: true, category: "Mandatory" },
+    { id: "chk-4", text: "Issue Recommended Textbooks from Central Library", done: false, category: "Academics" },
+    { id: "chk-5", text: "Attend 'Aarohan 2026' Fresher Clubs Orientation Fair", done: false, category: "Social" },
+    { id: "chk-6", text: "Connect with assigned Senior Mentor for 1st Year Roadmap", done: false, category: "Mentorship" },
+    { id: "chk-7", text: "Register biometric attendance for Hostel & Mess entry", done: false, category: "Hostel" }
+  ],
+
+  todayMessMenu: {
+    breakfast: "Aloo Paratha with Curd & Pickle • Boiled Eggs / Fresh Banana • Bread, Butter, Mixed Fruit Jam • Masala Tea & Hot Milk",
+    lunch: "Paneer Butter Masala / Chicken Curry • Dal Tadka • Jeera Rice • Butter Roti • Spiced Raita & Hot Gulab Jamun",
+    snacks: "Crispy Veg Samosa & Mint Chutney • Masala Chai • Glucose Biscuits",
+    dinner: "Kadhai Veggies • Yellow Dal Fry • Steamed Basmati Rice • Chapati • Fruit Custard"
+  }
+};
+
+</script>
+  <script>
+// CampusBuddy Core Application Logic
+document.addEventListener('DOMContentLoaded', () => {
+  initApp();
+});
+
+// App State
+let currentTab = 'dashboard';
+let seniorBranchFilter = 'All';
+let seniorInterestFilter = 'All';
+let asgFilter = 'all';
+let noticeCategory = 'All';
+let locationCategory = 'All';
+let activeMessMeal = 'breakfast';
+let myBookedMentors = [];
+let pendingSubmissionAsgId = null;
+
+// Chat History State
+let chatMessages = [
+  {
+    sender: 'ai',
+    text: `👋 **Hi Aarav! Welcome to CampusBuddy!**\n\nI'm your 24/7 AI guide for your first year. You can ask me anything about campus locations, class timetables, club inductions, Wi-Fi registration, or mess menus.\n\n*Try asking one of the questions above or type your own!*`,
+    timestamp: 'Just now'
+  }
+];
+
+async function initApp() {
+  initTheme();
+  setupKeyboardShortcuts();
+  renderGreeting();
+
+  try {
+    const [schedRes, asgRes, dlRes, senRes, locRes, ntcRes, chkRes, messRes] = await Promise.all([
+      fetch('/api/schedule').then(r => r.json()).catch(() => null),
+      fetch('/api/assignments').then(r => r.json()).catch(() => null),
+      fetch('/api/deadlines').then(r => r.json()).catch(() => null),
+      fetch('/api/seniors').then(r => r.json()).catch(() => null),
+      fetch('/api/locations').then(r => r.json()).catch(() => null),
+      fetch('/api/notices').then(r => r.json()).catch(() => null),
+      fetch('/api/checklist').then(r => r.json()).catch(() => null),
+      fetch('/api/mess-menu').then(r => r.json()).catch(() => null)
+    ]);
+
+    if (schedRes && schedRes.success) CAMPUS_DATA.schedule = schedRes.data;
+    if (asgRes && asgRes.success) CAMPUS_DATA.assignments = asgRes.data;
+    if (dlRes && dlRes.success) CAMPUS_DATA.deadlines = dlRes.data;
+    if (senRes && senRes.success) CAMPUS_DATA.seniors = senRes.data;
+    if (locRes && locRes.success) CAMPUS_DATA.campusLocations = locRes.data;
+    if (ntcRes && ntcRes.success) CAMPUS_DATA.notices = ntcRes.data;
+    if (chkRes && chkRes.success) CAMPUS_DATA.fresherChecklist = chkRes.data;
+    if (messRes && messRes.success) CAMPUS_DATA.todayMessMenu = messRes.data;
+
+    console.log('✅ CampusBuddy: Data loaded from backend API');
+  } catch (err) {
+    console.log('⚠️ CampusBuddy: Backend not available, using inline data');
+  }
+
+  renderSchedule();
+  renderAssignments();
+  renderDeadlines();
+  renderChecklist();
+  renderChatMessages();
+  renderSeniors();
+  renderLocations();
+  renderMapPins();
+  renderNotices();
+  renderNotifications();
+  renderMessMenu();
+}
+
+// -------------------------------------------------------------
+// NAVIGATION & TABS
+// -------------------------------------------------------------
+function navigateTo(tabId) {
+  currentTab = tabId;
+  
+  // Hide all sections
+  document.querySelectorAll('.app-section').forEach(sec => sec.classList.add('hidden'));
+  
+  // Show active section
+  const targetSection = document.getElementById(`section-${tabId}`);
+  if (targetSection) {
+    targetSection.classList.remove('hidden');
+    targetSection.classList.add('animate-fade-in');
+  }
+
+  // Update navbar tab pills
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    if (tab.dataset.tab === tabId) {
+      tab.classList.add('active', 'bg-brand-600', 'text-white');
+      tab.classList.remove('text-slate-700', 'dark:text-slate-300', 'hover:bg-slate-100', 'dark:hover:bg-slate-800');
+    } else {
+      tab.classList.remove('active', 'bg-brand-600', 'text-white');
+      tab.classList.add('text-slate-700', 'dark:text-slate-300', 'hover:bg-slate-100', 'dark:hover:bg-slate-800');
+    }
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// -------------------------------------------------------------
+// THEME (DARK / LIGHT MODE)
+// -------------------------------------------------------------
+function initTheme() {
+  const savedTheme = localStorage.getItem('cb_theme') || 'light';
+  if (savedTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+}
+
+function toggleTheme() {
+  if (document.documentElement.classList.contains('dark')) {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('cb_theme', 'light');
+    showToast('Switched to Light mode');
+  } else {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('cb_theme', 'dark');
+    showToast('Switched to Dark mode');
+  }
+}
+
+// -------------------------------------------------------------
+// DYNAMIC GREETING
+// -------------------------------------------------------------
+function renderGreeting() {
+  const hour = new Date().getHours();
+  let timeGreeting = "Good morning";
+  if (hour >= 12 && hour < 17) timeGreeting = "Good afternoon";
+  else if (hour >= 17) timeGreeting = "Good evening";
+
+  const greetingEl = document.getElementById('greeting-text');
+  if (greetingEl) {
+    greetingEl.innerText = `${timeGreeting}, Aarav! 👋`;
+  }
+}
+
+// -------------------------------------------------------------
+// DASHBOARD: SCHEDULE
+// -------------------------------------------------------------
+function renderSchedule() {
+  const container = document.getElementById('schedule-list');
+  if (!container) return;
+
+  container.innerHTML = CAMPUS_DATA.schedule.map(item => {
+    let statusBadge = '';
+    let borderClass = 'border-slate-200 dark:border-slate-800';
+
+    if (item.status === 'completed') {
+      statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500">Completed</span>`;
+    } else if (item.status === 'active') {
+      statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 live-pulse"></span> Ongoing Now</span>`;
+      borderClass = 'border-emerald-400 dark:border-emerald-500 ring-2 ring-emerald-500/20';
+    } else {
+      statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">Upcoming</span>`;
+    }
+
+    return `
+      <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-slate-900/80 border ${borderClass} shadow-sm hover:shadow-md transition flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-start space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-${item.color}-50 dark:bg-${item.color}-900/40 text-${item.color}-600 dark:text-${item.color}-400 flex items-center justify-center font-bold text-xs shrink-0">
+            ${item.code}
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h4 class="font-heading font-bold text-sm text-slate-900 dark:text-white">${item.name}</h4>
+              ${statusBadge}
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <i class="fa-regular fa-user mr-1 text-slate-400"></i>${item.instructor} • <span class="font-medium text-slate-700 dark:text-slate-300">${item.type}</span>
+            </p>
+            <p class="text-xs font-semibold text-brand-600 dark:text-brand-400 mt-1 flex items-center cursor-pointer hover:underline" onclick="highlightCampusLocation('${item.roomLink}')">
+              <i class="fa-solid fa-location-dot mr-1"></i>${item.venue}
+            </p>
+          </div>
+        </div>
+
+        <div class="sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100 dark:border-slate-800 flex sm:flex-col justify-between items-center sm:items-end">
+          <span class="text-xs font-mono font-bold text-slate-800 dark:text-slate-200">
+            <i class="fa-regular fa-clock mr-1 text-slate-400"></i>${item.time}
+          </span>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+            Attendance: <strong class="text-emerald-600 dark:text-emerald-400">${item.attendance}</strong>
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// -------------------------------------------------------------
+// DASHBOARD: ASSIGNMENTS
+// -------------------------------------------------------------
+function filterAssignments(filterType) {
+  asgFilter = filterType;
+  
+  ['all', 'pending', 'submitted'].forEach(type => {
+    const btn = document.getElementById(`asg-filter-${type}`);
+    if (btn) {
+      if (type === filterType) {
+        btn.className = "px-2.5 py-1 rounded-md font-semibold bg-white dark:bg-slate-700 shadow-sm text-brand-600 dark:text-brand-400";
+      } else {
+        btn.className = "px-2.5 py-1 rounded-md font-medium text-slate-600 dark:text-slate-400";
+      }
+    }
+  });
+
+  renderAssignments();
+}
+
+function renderAssignments() {
+  const container = document.getElementById('assignments-list');
+  if (!container) return;
+
+  const filtered = CAMPUS_DATA.assignments.filter(item => {
+    if (asgFilter === 'pending') return !item.submitted;
+    if (asgFilter === 'submitted') return item.submitted;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<p class="text-xs text-slate-400 py-6 text-center italic">No assignments match this filter.</p>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    let badge = '';
+    if (item.submitted) {
+      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300"><i class="fa-solid fa-check mr-1"></i>Submitted</span>`;
+    } else if (item.urgency === 'urgent') {
+      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300"><i class="fa-solid fa-fire mr-1"></i>Due Tomorrow</span>`;
+    } else if (item.urgency === 'warning') {
+      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">Due in 4 Days</span>`;
+    } else {
+      badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">Upcoming</span>`;
+    }
+
+    return `
+      <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-brand-500/50 transition">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="flex items-center space-x-2">
+              <h4 class="font-heading font-bold text-sm text-slate-900 dark:text-white">${item.title}</h4>
+            </div>
+            <p class="text-xs font-semibold text-brand-600 dark:text-brand-400 mt-0.5">${item.course}</p>
+          </div>
+          ${badge}
+        </div>
+
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2">${item.description}</p>
+
+        <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center space-x-3 text-slate-500 dark:text-slate-400">
+            <span><i class="fa-regular fa-clock mr-1 text-slate-400"></i>${item.dueDate}</span>
+            <span><i class="fa-solid fa-award mr-1 text-amber-500"></i>${item.weightage}</span>
+          </div>
+
+          <div>
+            ${item.submitted ? 
+              `<button class="px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-xs font-semibold" disabled>
+                <i class="fa-solid fa-check mr-1"></i>Done
+              </button>` : 
+              `<button onclick="openSubmitModal('${item.id}')" class="px-3 py-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition shadow-sm">
+                Submit File &rarr;
+              </button>`
+            }
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// -------------------------------------------------------------
+// DASHBOARD: DEADLINES
+// -------------------------------------------------------------
+function renderDeadlines() {
+  const container = document.getElementById('deadlines-list');
+  if (!container) return;
+
+  container.innerHTML = CAMPUS_DATA.deadlines.map(item => `
+    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800/80 transition">
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${item.urgent ? 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}">
+          ${item.category}
+        </span>
+        <span class="text-xs font-bold ${item.urgent ? 'text-red-600 dark:text-red-400' : 'text-slate-500'}">
+          <i class="fa-regular fa-hourglass-half mr-1"></i>${item.timeRemaining}
+        </span>
+      </div>
+      <h4 class="font-heading font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 mt-2">${item.title}</h4>
+      <div class="mt-2 flex items-center justify-between text-xs pt-2 border-t border-slate-200/50 dark:border-slate-800">
+        <span class="text-slate-400"><i class="fa-regular fa-calendar mr-1"></i>${item.date}</span>
+        <span class="text-brand-600 dark:text-brand-400 font-semibold cursor-pointer hover:underline" onclick="showToast('Opened action: ' + '${item.actionText}')">${item.actionText} &rarr;</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// -------------------------------------------------------------
+// FRESHER CHECKLIST
+// -------------------------------------------------------------
+function getChecklistState() {
+  const saved = localStorage.getItem('cb_fresher_checklist');
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) {}
+  }
+  return CAMPUS_DATA.fresherChecklist;
+}
+
+function saveChecklistState(items) {
+  localStorage.setItem('cb_fresher_checklist', JSON.stringify(items));
+}
+
+function toggleChecklistItem(id) {
+  const list = getChecklistState();
+  const item = list.find(x => x.id === id);
+  if (item) {
+    item.done = !item.done;
+    saveChecklistState(list);
+    renderChecklist();
+    showToast(item.done ? 'Task marked as complete! 🎉' : 'Task marked pending.');
+  }
+}
+
+function renderChecklist() {
+  const list = getChecklistState();
+  const completed = list.filter(x => x.done).length;
+  const total = list.length;
+  const pct = Math.round((completed / total) * 100);
+
+  // Update widget counters
+  const widgetProgressText = document.getElementById('checklist-progress-text');
+  const widgetProgressBar = document.getElementById('checklist-progress-bar');
+  const toolkitCount = document.getElementById('toolkit-checklist-count');
+
+  if (widgetProgressText) widgetProgressText.innerText = `${completed}/${total} Done (${pct}%)`;
+  if (widgetProgressBar) widgetProgressBar.style.width = `${pct}%`;
+  if (toolkitCount) toolkitCount.innerText = `${completed} of ${total} Completed`;
+
+  // Render mini preview in Dashboard
+  const previewContainer = document.getElementById('checklist-preview-list');
+  if (previewContainer) {
+    previewContainer.innerHTML = list.slice(0, 3).map(item => `
+      <div class="flex items-center space-x-2 cursor-pointer" onclick="toggleChecklistItem('${item.id}')">
+        <input type="checkbox" ${item.done ? 'checked' : ''} class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 cursor-pointer pointer-events-none">
+        <span class="${item.done ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-300 font-medium'} truncate">
+          ${item.text}
+        </span>
+      </div>
+    `).join('');
+  }
+
+  // Render full checklist in Fresher Toolkit
+  const fullContainer = document.getElementById('full-checklist-container');
+  if (fullContainer) {
+    fullContainer.innerHTML = list.map(item => `
+      <div class="p-3 rounded-xl border ${item.done ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/40' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'} flex items-center justify-between gap-3 cursor-pointer hover:shadow-sm transition" onclick="toggleChecklistItem('${item.id}')">
+        <div class="flex items-center space-x-3">
+          <input type="checkbox" ${item.done ? 'checked' : ''} class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 cursor-pointer pointer-events-none">
+          <div>
+            <p class="text-xs font-semibold ${item.done ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200'}">
+              ${item.text}
+            </p>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${item.category}</span>
+          </div>
+        </div>
+        ${item.done ? `<span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 shrink-0"><i class="fa-solid fa-circle-check mr-1"></i>Completed</span>` : `<span class="text-xs font-semibold text-slate-400 shrink-0">Pending</span>`}
+      </div>
+    `).join('');
+  }
+}
+
+// -------------------------------------------------------------
+// SECTION 2: ASK CAMPUSBUDDY AI Q&A CHATBOT
+// -------------------------------------------------------------
+function askQuestionPreset(promptText) {
+  navigateTo('ask');
+  const inputEl = document.getElementById('chat-input');
+  if (inputEl) {
+    inputEl.value = promptText;
+  }
+  handleChatSubmit(new Event('submit'));
+}
+
+function handleChatSubmit(e) {
+  if (e) e.preventDefault();
+  const inputEl = document.getElementById('chat-input');
+  const query = inputEl.value.trim();
+  if (!query) return;
+
+  // Add User message
+  chatMessages.push({
+    sender: 'user',
+    text: query,
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  });
+
+  inputEl.value = '';
+  renderChatMessages();
+
+  // Scroll to bottom
+  const container = document.getElementById('chat-messages-container');
+  container.scrollTop = container.scrollHeight;
+
+  // Show simulated AI typing
+  showTypingIndicator();
+
+  setTimeout(() => {
+    removeTypingIndicator();
+    generateSmartBotResponse(query);
+  }, 750);
+}
+
+function showTypingIndicator() {
+  const container = document.getElementById('chat-messages-container');
+  const typingDiv = document.createElement('div');
+  typingDiv.id = 'chat-typing-indicator';
+  typingDiv.className = 'flex items-start space-x-3 animate-fade-in';
+  typingDiv.innerHTML = `
+    <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs shrink-0 shadow-md">
+      <i class="fa-solid fa-robot"></i>
+    </div>
+    <div class="chat-bubble-ai p-3 rounded-2xl flex items-center space-x-1.5">
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+    </div>
+  `;
+  container.appendChild(typingDiv);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTypingIndicator() {
+  const indicator = document.getElementById('chat-typing-indicator');
+  if (indicator) indicator.remove();
+}
+
+async function generateSmartBotResponse(query) {
+  let replyText = "";
+  let actionData = null;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: query })
+    });
+    const result = await res.json();
+    if (result.success) {
+      replyText = result.data.text;
+    }
+  } catch (err) {
+    // Backend unavailable, fall back to local FAQ
+  }
+
+  if (!replyText) {
+    const lower = query.toLowerCase();
+    let matched = null;
+
+    for (const item of CAMPUS_DATA.faqKnowledge) {
+      if (item.keywords.some(k => lower.includes(k))) {
+        matched = item;
+        break;
+      }
+    }
+
+    if (matched) {
+      replyText = matched.response;
+      actionData = matched.action;
+    } else if (lower.includes('schedule') || lower.includes('class') || lower.includes('lecture')) {
+      replyText = `Here is your schedule for today:\n- **09:00 AM**: CS101 Lecture (LHC-102)\n- **10:45 AM**: MA101 Lecture (Academic Block 1)\n- **02:00 PM**: PH101 Physics Lab (Science Complex)\n- **04:45 PM**: HS101 Technical Communication Tutorial`;
+      actionData = { type: 'tab', target: 'dashboard', label: '📊 View Full Timetable' };
+    } else if (lower.includes('exam') || lower.includes('test') || lower.includes('minor')) {
+      replyText = `Minor-1 examinations for 1st Year UG start from **September 10, 2026**. Seating allocations will be visible on the student portal. Don't forget to carry your RFID Smart ID card!`;
+      actionData = { type: 'notice', target: 'ntc-1', label: '📢 View Official Exam Circular' };
+    } else {
+      replyText = `I searched our college knowledge base for: *"${query}"*\n\nHere is some helpful guidance: Freshers can find academic policies in the **Important Notices** tab, book 1-on-1 guidance with seniors in **Senior Connect**, or locate facilities using the **Campus Guide**!\n\nWould you like to ask about the **Library**, **Clubs**, **Wi-Fi setup**, or **Mess menu**?`;
+      actionData = { type: 'tab', target: 'guide', label: '📍 Explore Campus Guide' };
+    }
+  }
+
+  chatMessages.push({
+    sender: 'ai',
+    text: replyText,
+    action: actionData,
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  });
+
+  renderChatMessages();
+  const container = document.getElementById('chat-messages-container');
+  container.scrollTop = container.scrollHeight;
+}
+
+function renderChatMessages() {
+  const container = document.getElementById('chat-messages-container');
+  if (!container) return;
+
+  container.innerHTML = chatMessages.map(msg => {
+    if (msg.sender === 'user') {
+      return `
+        <div class="flex items-start justify-end space-x-2 animate-fade-in">
+          <div class="chat-bubble-user p-3 sm:p-4 max-w-[85%] text-xs sm:text-sm shadow-md">
+            <p class="leading-relaxed whitespace-pre-line">${escapeHtml(msg.text)}</p>
+            <span class="block text-[10px] text-indigo-200 text-right mt-1">${msg.timestamp}</span>
+          </div>
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" class="w-7 h-7 rounded-full object-cover ring-1 ring-brand-400 shrink-0">
+        </div>
+      `;
+    } else {
+      let formattedText = formatMarkdown(msg.text);
+      let actionBtn = '';
+      if (msg.action) {
+        if (msg.action.type === 'location') {
+          actionBtn = `<button onclick="highlightCampusLocation('${msg.action.target}')" class="mt-3 px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-300 font-bold text-xs hover:bg-brand-100 transition inline-flex items-center space-x-1 border border-brand-200 dark:border-brand-800">${msg.action.label}</button>`;
+        } else if (msg.action.type === 'tab') {
+          actionBtn = `<button onclick="navigateTo('${msg.action.target}')" class="mt-3 px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-300 font-bold text-xs hover:bg-brand-100 transition inline-flex items-center space-x-1 border border-brand-200 dark:border-brand-800">${msg.action.label}</button>`;
+        } else if (msg.action.type === 'notice') {
+          actionBtn = `<button onclick="openNoticeModal('${msg.action.target}')" class="mt-3 px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-300 font-bold text-xs hover:bg-brand-100 transition inline-flex items-center space-x-1 border border-brand-200 dark:border-brand-800">${msg.action.label}</button>`;
+        }
+      }
+
+      return `
+        <div class="flex items-start space-x-3 animate-fade-in">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white flex items-center justify-center text-xs shrink-0 shadow-md shadow-brand-500/20">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <div class="chat-bubble-ai p-4 max-w-[85%] text-xs sm:text-sm text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-800">
+            <div class="leading-relaxed">${formattedText}</div>
+            ${actionBtn}
+            <span class="block text-[10px] text-slate-400 mt-2">${msg.timestamp}</span>
+          </div>
+        </div>
+      `;
+    }
+  }).join('');
+}
+
+function clearChatHistory() {
+  chatMessages = [
+    {
+      sender: 'ai',
+      text: `Chat history cleared. How can I help you right now?`,
+      timestamp: 'Just now'
+    }
+  ];
+  renderChatMessages();
+  showToast('Chat history cleared');
+}
+
+// -------------------------------------------------------------
+// SECTION 3: SENIOR CONNECT (PEER MENTORSHIP)
+// -------------------------------------------------------------
+function setSeniorBranchFilter(branch) {
+  seniorBranchFilter = branch;
+  
+  const chips = document.querySelectorAll('#senior-branch-filters .filter-chip');
+  chips.forEach(chip => {
+    if (chip.innerText === branch || (branch === 'All' && chip.innerText === 'All Branches')) {
+      chip.className = "filter-chip active px-3 py-1 rounded-lg text-xs font-semibold bg-brand-600 text-white";
+    } else {
+      chip.className = "filter-chip px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400";
+    }
+  });
+
+  applySeniorFilters();
+}
+
+function setSeniorInterestFilter(interest) {
+  seniorInterestFilter = interest;
+  
+  const chips = document.querySelectorAll('#senior-interest-filters .interest-chip');
+  chips.forEach(chip => {
+    if (chip.innerText.includes(interest) || (interest === 'All' && chip.innerText === 'All Interests')) {
+      chip.className = "interest-chip active px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-600 text-white";
+    } else {
+      chip.className = "interest-chip px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400";
+    }
+  });
+
+  applySeniorFilters();
+}
+
+function applySeniorFilters() {
+  const searchInput = document.getElementById('senior-search-input');
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+  const filtered = CAMPUS_DATA.seniors.filter(s => {
+    // Branch filter
+    if (seniorBranchFilter !== 'All' && !s.branch.includes(seniorBranchFilter)) return false;
+
+    // Interest filter
+    if (seniorInterestFilter !== 'All') {
+      const hasInterest = s.interests.some(i => i.toLowerCase().includes(seniorInterestFilter.toLowerCase()));
+      if (!hasInterest) return false;
+    }
+
+    // Search query
+    if (query) {
+      const matchName = s.name.toLowerCase().includes(query);
+      const matchBio = s.bio.toLowerCase().includes(query);
+      const matchBadge = s.badge.toLowerCase().includes(query);
+      const matchInterest = s.interests.some(i => i.toLowerCase().includes(query));
+      if (!matchName && !matchBio && !matchBadge && !matchInterest) return false;
+    }
+
+    return true;
+  });
+
+  const countEl = document.getElementById('seniors-count');
+  if (countEl) countEl.innerText = filtered.length;
+
+  renderSeniors(filtered);
+}
+
+function renderSeniors(list = CAMPUS_DATA.seniors) {
+  const container = document.getElementById('seniors-grid');
+  if (!container) return;
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full py-12 text-center text-slate-400">
+        <i class="fa-solid fa-user-slash text-3xl mb-2"></i>
+        <p class="text-sm">No senior mentors matched your filters.</p>
+        <button onclick="setSeniorBranchFilter('All'); setSeniorInterestFilter('All');" class="mt-3 text-xs font-bold text-brand-600 underline">Reset all filters</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = list.map(s => `
+    <div class="glass-card rounded-2xl p-5 flex flex-col justify-between border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 transition relative">
+      
+      <!-- Top header -->
+      <div>
+        <div class="flex items-start space-x-3.5">
+          <img src="${s.avatar}" alt="${s.name}" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-brand-500/30 shrink-0">
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white">${s.name}</h3>
+              ${s.verified ? `<i class="fa-solid fa-circle-check text-brand-600 dark:text-brand-400 text-xs" title="Verified Senior Mentor"></i>` : ''}
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">${s.year} • <strong class="text-slate-700 dark:text-slate-300">${s.branch}</strong></p>
+            <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+              ⭐ CGPA: ${s.cgpa}
+            </span>
+          </div>
+        </div>
+
+        <!-- Highlight Badge -->
+        <div class="mt-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-800 text-[11px] font-medium text-slate-700 dark:text-slate-300 flex items-center space-x-1.5">
+          <i class="fa-solid fa-trophy text-amber-500 text-xs"></i>
+          <span class="truncate">${s.badge}</span>
+        </div>
+
+        <!-- Bio -->
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-2.5 leading-relaxed line-clamp-3">${s.bio}</p>
+
+        <!-- Interests tags -->
+        <div class="mt-3 flex flex-wrap gap-1.5">
+          ${s.interests.map(i => `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300">${i}</span>`).join('')}
+        </div>
+      </div>
+
+      <!-- Card footer & Connect button -->
+      <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+        <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">${s.availability}</span>
+        <button onclick="openMentorModal('${s.id}')" class="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold transition shadow-sm flex items-center space-x-1.5">
+          <i class="fa-regular fa-comment-dots text-xs"></i>
+          <span>Connect</span>
+        </button>
+      </div>
+
+    </div>
+  `).join('');
+}
+
+function openMentorModal(mentorId) {
+  const mentor = CAMPUS_DATA.seniors.find(x => x.id === mentorId);
+  if (!mentor) return;
+
+  document.getElementById('modal-mentor-id').value = mentor.id;
+  document.getElementById('modal-mentor-name').innerText = mentor.name;
+  document.getElementById('modal-mentor-branch').innerText = `${mentor.year} • ${mentor.branch} (CGPA: ${mentor.cgpa})`;
+  document.getElementById('modal-mentor-avatar').src = mentor.avatar;
+
+  const slotSelect = document.getElementById('modal-mentor-slot');
+  slotSelect.innerHTML = mentor.slots.map(s => `<option value="${s}">${s}</option>`).join('');
+
+  document.getElementById('modal-mentor-connect').classList.remove('hidden');
+}
+
+function closeMentorModal() {
+  document.getElementById('modal-mentor-connect').classList.add('hidden');
+}
+
+async function handleMentorBooking(e) {
+  e.preventDefault();
+  const mentorId = document.getElementById('modal-mentor-id').value;
+  const topic = document.getElementById('modal-mentor-topic').value;
+  const slot = document.getElementById('modal-mentor-slot').value;
+  const note = document.getElementById('modal-mentor-note').value;
+
+  const mentor = CAMPUS_DATA.seniors.find(x => x.id === mentorId);
+  if (!mentor) return;
+
+  let toastMsg = `Request sent! Notification sent to adityalovespatna0106@gmail.com`;
+  try {
+    const res = await fetch(`/api/seniors/${mentorId}/connect`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, slot, note })
+    });
+    const result = await res.json();
+    if (result.success) toastMsg = result.message;
+  } catch (err) {
+    console.log('Backend unavailable, using local state');
+  }
+
+  myBookedMentors.push({
+    mentorName: mentor.name,
+    mentorBranch: mentor.branch,
+    topic,
+    slot,
+    note: note || "No additional notes",
+    date: "Scheduled for this week"
+  });
+
+  closeMentorModal();
+  renderMyBookings();
+  showToast(toastMsg);
+}
+
+function renderMyBookings() {
+  const container = document.getElementById('my-connections-list');
+  if (!container) return;
+
+  if (myBookedMentors.length === 0) {
+    container.innerHTML = `<p class="text-xs text-slate-500 py-3 italic">You haven't requested any mentorship sessions yet. Click "Connect" on any mentor card above!</p>`;
+    return;
+  }
+
+  container.innerHTML = myBookedMentors.map(b => `
+    <div class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+      <div>
+        <p class="font-bold text-slate-900 dark:text-white">${b.mentorName} <span class="font-normal text-slate-500">(${b.mentorBranch})</span></p>
+        <p class="text-brand-600 dark:text-brand-400 font-semibold">Topic: ${b.topic}</p>
+        <p class="text-slate-500 text-[11px]"><i class="fa-regular fa-clock mr-1"></i>Slot: ${b.slot}</p>
+      </div>
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 self-start sm:self-auto">
+        <i class="fa-solid fa-calendar-check mr-1"></i>Request Confirmed
+      </span>
+    </div>
+  `).join('');
+}
+
+// -------------------------------------------------------------
+// SECTION 4: CAMPUS GUIDE & DIRECTORY
+// -------------------------------------------------------------
+function renderMapPins() {
+  const container = document.getElementById('map-pins-container');
+  if (!container) return;
+
+  container.innerHTML = CAMPUS_DATA.campusLocations.map(loc => {
+    let pinColor = "bg-blue-600";
+    if (loc.category === 'Food & Hangout') pinColor = "bg-amber-500";
+    else if (loc.category === 'Sports & Fitness') pinColor = "bg-emerald-500";
+    else if (loc.category === 'Administration') pinColor = "bg-purple-600";
+    else if (loc.category === 'Health & Support') pinColor = "bg-red-600";
+
+    return `
+      <div 
+        id="pin-${loc.id}"
+        class="map-pin"
+        style="left: ${loc.coordinates.x}%; top: ${loc.coordinates.y}%;"
+        onclick="highlightCampusLocation('${loc.id}')"
+        title="${loc.name}"
+      >
+        <div class="relative flex items-center justify-center">
+          <span class="pulse-ring ${pinColor}"></span>
+          <div class="w-7 h-7 rounded-full ${pinColor} text-white flex items-center justify-center text-xs shadow-lg border-2 border-white ring-1 ring-slate-900">
+            <i class="fa-solid ${loc.icon}"></i>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterLocations(category) {
+  locationCategory = category;
+
+  const buttons = document.querySelectorAll('#location-category-filters .loc-filter-btn');
+  buttons.forEach(btn => {
+    if (btn.innerText.includes(category) || (category === 'All' && btn.innerText === 'All Locations')) {
+      btn.className = "loc-filter-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white";
+    } else {
+      btn.className = "loc-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300";
+    }
+  });
+
+  const filtered = CAMPUS_DATA.campusLocations.filter(loc => {
+    if (category === 'All') return true;
+    return loc.category.toLowerCase().includes(category.toLowerCase().split(' ')[0]);
+  });
+
+  renderLocations(filtered);
+}
+
+function renderLocations(list = CAMPUS_DATA.campusLocations) {
+  const container = document.getElementById('locations-grid');
+  if (!container) return;
+
+  container.innerHTML = list.map(loc => `
+    <div id="card-${loc.id}" class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-lg transition flex flex-col justify-between">
+      
+      <div>
+        <div class="h-44 w-full relative overflow-hidden">
+          <img src="${loc.image}" alt="${loc.name}" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+          
+          <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/60 backdrop-blur-md text-white border border-white/20">
+            ${loc.category}
+          </span>
+
+          <span class="absolute bottom-3 left-3 text-white text-xs font-semibold flex items-center">
+            <i class="fa-regular fa-clock mr-1.5 text-amber-300"></i>${loc.timings}
+          </span>
+        </div>
+
+        <div class="p-5">
+          <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white">${loc.name}</h3>
+          <p class="text-xs text-brand-600 dark:text-brand-400 font-semibold mt-1">
+            <i class="fa-solid fa-map-pin mr-1"></i>${loc.floorInfo}
+          </p>
+
+          <!-- Key facilities -->
+          <div class="mt-3 space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
+            ${loc.facilities.map(f => `<p class="flex items-start"><i class="fa-solid fa-check text-emerald-500 text-[10px] mt-1 mr-1.5 shrink-0"></i><span>${f}</span></p>`).join('')}
+          </div>
+
+          <!-- Fresher Tip -->
+          <div class="mt-3 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 text-[11px] text-amber-900 dark:text-amber-200">
+            <strong>💡 Fresher Tip:</strong> ${loc.tip}
+          </div>
+        </div>
+      </div>
+
+      <!-- Card actions -->
+      <div class="p-5 pt-0 flex items-center justify-between text-xs">
+        <button onclick="showRouteTo('${loc.id}')" class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-diamond-turn-right text-brand-500"></i>
+          <span>Directions</span>
+        </button>
+
+        <button onclick="highlightCampusLocation('${loc.id}')" class="text-brand-600 dark:text-brand-400 font-bold hover:underline">
+          Highlight on Map &rarr;
+        </button>
+      </div>
+
+    </div>
+  `).join('');
+}
+
+function highlightCampusLocation(locId) {
+  navigateTo('guide');
+
+  // Highlight map pin
+  document.querySelectorAll('.map-pin').forEach(p => p.classList.remove('active'));
+  const pin = document.getElementById(`pin-${locId}`);
+  if (pin) pin.classList.add('active');
+
+  // Scroll to location card
+  setTimeout(() => {
+    const card = document.getElementById(`card-${locId}`);
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('ring-4', 'ring-brand-500/50');
+      setTimeout(() => card.classList.remove('ring-4', 'ring-brand-500/50'), 2500);
+    }
+  }, 200);
+}
+
+function openRouteModal() {
+  document.getElementById('modal-route-guide').classList.remove('hidden');
+}
+
+function closeRouteModal() {
+  document.getElementById('modal-route-guide').classList.add('hidden');
+}
+
+function showRouteTo(locId) {
+  openRouteModal();
+  const destSelect = document.getElementById('route-dest');
+  if (destSelect) {
+    destSelect.value = locId;
+    calculateRouteDirections();
+  }
+}
+
+function calculateRouteDirections() {
+  const start = document.getElementById('route-start').value;
+  const destId = document.getElementById('route-dest').value;
+  const destObj = CAMPUS_DATA.campusLocations.find(x => x.id === destId);
+  if (!destObj) return;
+
+  const resultBox = document.getElementById('route-results-box');
+  const resultTitle = document.getElementById('route-result-title');
+  const resultSteps = document.getElementById('route-result-steps');
+
+  resultTitle.innerText = `Route: ${start} ➔ ${destObj.name}`;
+  resultSteps.innerHTML = `
+    <strong>Estimated walking time:</strong> 3-5 mins (350 meters)<br>
+    <strong>Path:</strong> ${destObj.directionsFromGate}<br>
+    <strong>Floor guide:</strong> ${destObj.floorInfo}
+  `;
+  resultBox.classList.remove('hidden');
+}
+
+// -------------------------------------------------------------
+// SECTION 5: IMPORTANT NOTICES
+// -------------------------------------------------------------
+function setNoticeCategory(cat) {
+  noticeCategory = cat;
+
+  const chips = document.querySelectorAll('#notice-category-filters .notice-chip');
+  chips.forEach(chip => {
+    if (chip.innerText.includes(cat) || (cat === 'All' && chip.innerText === 'All Notices')) {
+      chip.className = "notice-chip active px-3 py-1 rounded-lg text-xs font-bold bg-brand-600 text-white";
+    } else {
+      chip.className = "notice-chip px-3 py-1 rounded-lg text-xs font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300";
+    }
+  });
+
+  applyNoticeFilters();
+}
+
+function applyNoticeFilters() {
+  const searchInput = document.getElementById('notice-search-input');
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+  const filtered = CAMPUS_DATA.notices.filter(n => {
+    if (noticeCategory !== 'All' && !n.category.toLowerCase().includes(noticeCategory.toLowerCase().split(' ')[0])) {
+      return false;
+    }
+
+    if (query) {
+      const matchTitle = n.title.toLowerCase().includes(query);
+      const matchSummary = n.summary.toLowerCase().includes(query);
+      const matchRef = n.refNo.toLowerCase().includes(query);
+      if (!matchTitle && !matchSummary && !matchRef) return false;
+    }
+
+    return true;
+  });
+
+  renderNotices(filtered);
+}
+
+function renderNotices(list = CAMPUS_DATA.notices) {
+  const container = document.getElementById('notices-list-container');
+  if (!container) return;
+
+  if (list.length === 0) {
+    container.innerHTML = `<p class="text-xs text-slate-400 py-8 text-center italic">No official notices match this filter.</p>`;
+    return;
+  }
+
+  container.innerHTML = list.map(n => {
+    let urgencyBadge = '';
+    if (n.urgency === 'urgent') {
+      urgencyBadge = `<span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300">HIGH PRIORITY</span>`;
+    } else if (n.urgency === 'event') {
+      urgencyBadge = `<span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300">CAMPUS EVENT</span>`;
+    } else {
+      urgencyBadge = `<span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">GENERAL CIRCULAR</span>`;
+    }
+
+    return `
+      <div class="glass-card rounded-2xl p-5 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 transition">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center space-x-2">
+            ${n.pinned ? `<span class="text-amber-500 text-xs font-bold flex items-center"><i class="fa-solid fa-thumbtack mr-1"></i>Pinned</span>` : ''}
+            <span class="text-xs text-slate-400 font-mono">${n.refNo}</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            ${urgencyBadge}
+            <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i>${n.date}</span>
+          </div>
+        </div>
+
+        <h3 class="font-heading font-bold text-base text-slate-900 dark:text-white mt-2 leading-snug">${n.title}</h3>
+        <p class="text-xs text-brand-600 dark:text-brand-400 font-semibold mt-0.5">Issued by: ${n.source}</p>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">${n.summary}</p>
+
+        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center space-x-2 text-slate-500">
+            <i class="fa-solid fa-paperclip text-slate-400"></i>
+            <span class="font-medium">${n.attachment}</span>
+            <span class="text-[10px] text-slate-400">(${n.attachmentSize})</span>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="showToast('Notice added to personal calendar!')" class="px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold">
+              <i class="fa-regular fa-calendar-plus mr-1"></i>Calendar
+            </button>
+            <button onclick="openNoticeModal('${n.id}')" class="px-3.5 py-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition">
+              Read Full Notice &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openNoticeModal(noticeId) {
+  const notice = CAMPUS_DATA.notices.find(x => x.id === noticeId);
+  if (!notice) return;
+
+  document.getElementById('modal-notice-title').innerText = notice.title;
+  document.getElementById('modal-notice-source').innerText = `Issuing Authority: ${notice.source}`;
+  document.getElementById('modal-notice-ref').innerText = `Circular Ref: ${notice.refNo}`;
+  document.getElementById('modal-notice-date').innerText = notice.date;
+  document.getElementById('modal-notice-content').innerText = notice.content;
+  document.getElementById('modal-notice-attachment').innerText = notice.attachment;
+  document.getElementById('modal-notice-size').innerText = `(${notice.attachmentSize})`;
+
+  const badgeEl = document.getElementById('modal-notice-badge');
+  badgeEl.innerText = notice.category;
+  badgeEl.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300";
+
+  document.getElementById('modal-notice-view').classList.remove('hidden');
+}
+
+function closeNoticeModal() {
+  document.getElementById('modal-notice-view').classList.add('hidden');
+}
+
+// -------------------------------------------------------------
+// MESS MENU
+// -------------------------------------------------------------
+function setMessMeal(mealName) {
+  activeMessMeal = mealName;
+
+  ['breakfast', 'lunch', 'snacks', 'dinner'].forEach(m => {
+    const btn = document.getElementById(`meal-tab-${m}`);
+    if (btn) {
+      if (m === mealName) {
+        btn.className = "meal-tab-btn active p-3 rounded-xl bg-amber-500 text-white text-center transition";
+      } else {
+        btn.className = "meal-tab-btn p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-center transition";
+      }
+    }
+  });
+
+  renderMessMenu();
+}
+
+function renderMessMenu() {
+  const contentEl = document.getElementById('mess-meal-content');
+  if (!contentEl) return;
+
+  const mealText = CAMPUS_DATA.todayMessMenu[activeMessMeal] || "Menu not available";
+  contentEl.innerHTML = `
+    <div class="flex items-start space-x-3">
+      <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm shrink-0">
+        <i class="fa-solid fa-utensils"></i>
+      </div>
+      <div>
+        <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-400">Serving for ${activeMessMeal}</h4>
+        <p class="text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-200 mt-1 leading-relaxed">${mealText}</p>
+      </div>
+    </div>
+  `;
+}
+
+// -------------------------------------------------------------
+// NOTIFICATIONS & ASSIGNMENT SUBMISSION MODALS
+// -------------------------------------------------------------
+function renderNotifications() {
+  const container = document.getElementById('notif-list');
+  if (!container) return;
+
+  const notifs = [
+    { title: "CS101 Lab Sheet #3 Due Tomorrow", time: "1 hour ago", icon: "fa-clock text-red-500" },
+    { title: "Club Auditions 'Aarohan 2026' open", time: "3 hours ago", icon: "fa-users text-purple-500" },
+    { title: "Physical RFID ID Cards ready at Counter 4", time: "Yesterday", icon: "fa-id-card text-brand-500" },
+    { title: "Wi-Fi Eduroam setup instructions posted", time: "2 days ago", icon: "fa-wifi text-emerald-500" }
+  ];
+
+  container.innerHTML = notifs.map(n => `
+    <div class="py-2.5 px-2 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded-xl transition cursor-pointer" onclick="showToast('${n.title}')">
+      <div class="flex items-start space-x-2.5">
+        <i class="fa-solid ${n.icon} text-sm mt-0.5"></i>
+        <div>
+          <p class="font-semibold text-slate-800 dark:text-slate-200 leading-snug">${n.title}</p>
+          <span class="text-[10px] text-slate-400">${n.time}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleNotifDropdown() {
+  const dropdown = document.getElementById('notif-dropdown');
+  dropdown.classList.toggle('hidden');
+}
+
+function markAllNotifsRead() {
+  showToast('All notifications marked as read');
+  toggleNotifDropdown();
+}
+
+function openSubmitModal(asgId) {
+  pendingSubmissionAsgId = asgId;
+  const asg = CAMPUS_DATA.assignments.find(x => x.id === asgId);
+  if (!asg) return;
+
+  document.getElementById('modal-asg-title').innerText = asg.title;
+  document.getElementById('modal-asg-course').innerText = `${asg.course} • Due: ${asg.dueDate}`;
+  document.getElementById('file-upload-selected-name').classList.add('hidden');
+  document.getElementById('modal-asg-submit').classList.remove('hidden');
+}
+
+function closeSubmitModal() {
+  document.getElementById('modal-asg-submit').classList.add('hidden');
+}
+
+function handleMockFileSelect(input) {
+  if (input.files && input.files[0]) {
+    const nameEl = document.getElementById('file-upload-selected-name');
+    nameEl.innerText = `Selected: ${input.files[0].name}`;
+    nameEl.classList.remove('hidden');
+  }
+}
+
+async function confirmSubmitAssignment() {
+  if (pendingSubmissionAsgId) {
+    const asg = CAMPUS_DATA.assignments.find(x => x.id === pendingSubmissionAsgId);
+    if (asg) {
+      try {
+        await fetch(`/api/assignments/${pendingSubmissionAsgId}/submit`, { method: 'PUT' });
+      } catch (err) {
+        console.log('Backend unavailable, using local state');
+      }
+      asg.submitted = true;
+      renderAssignments();
+      closeSubmitModal();
+      showToast(`🎉 Assignment "${asg.title}" submitted successfully!`);
+    }
+  }
+}
+
+// -------------------------------------------------------------
+// GLOBAL SEARCH MODAL (Ctrl + K)
+// -------------------------------------------------------------
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      openGlobalSearch();
+    }
+    if (e.key === 'Escape') {
+      closeGlobalSearch();
+      closeMentorModal();
+      closeNoticeModal();
+      closeSubmitModal();
+      closeRouteModal();
+    }
+  });
+}
+
+function openGlobalSearch() {
+  const modal = document.getElementById('modal-global-search');
+  modal.classList.remove('hidden');
+  const input = document.getElementById('global-search-input');
+  setTimeout(() => input.focus(), 50);
+}
+
+function closeGlobalSearch() {
+  document.getElementById('modal-global-search').classList.add('hidden');
+}
+
+function handleGlobalSearchInput(query) {
+  const container = document.getElementById('global-search-results');
+  const q = query.toLowerCase().trim();
+  if (!q) {
+    container.innerHTML = `<p class="text-slate-400 text-center py-4">Type to instantly search across all CampusBuddy resources...</p>`;
+    return;
+  }
+
+  let matches = [];
+
+  // Search Locations
+  CAMPUS_DATA.campusLocations.forEach(loc => {
+    if (loc.name.toLowerCase().includes(q) || loc.category.toLowerCase().includes(q)) {
+      matches.push({
+        type: 'Location',
+        title: loc.name,
+        subtitle: `${loc.category} • ${loc.timings}`,
+        action: () => { closeGlobalSearch(); highlightCampusLocation(loc.id); }
+      });
+    }
+  });
+
+  // Search Mentors
+  CAMPUS_DATA.seniors.forEach(s => {
+    if (s.name.toLowerCase().includes(q) || s.branch.toLowerCase().includes(q) || s.bio.toLowerCase().includes(q)) {
+      matches.push({
+        type: 'Senior Mentor',
+        title: `${s.name} (${s.branch})`,
+        subtitle: s.badge,
+        action: () => { closeGlobalSearch(); navigateTo('seniors'); openMentorModal(s.id); }
+      });
+    }
+  });
+
+  // Search Notices
+  CAMPUS_DATA.notices.forEach(n => {
+    if (n.title.toLowerCase().includes(q) || n.summary.toLowerCase().includes(q)) {
+      matches.push({
+        type: 'Notice',
+        title: n.title,
+        subtitle: `${n.source} • ${n.date}`,
+        action: () => { closeGlobalSearch(); openNoticeModal(n.id); }
+      });
+    }
+  });
+
+  if (matches.length === 0) {
+    container.innerHTML = `
+      <div class="py-4 text-center">
+        <p class="text-slate-400">No direct matches. Want to ask AI?</p>
+        <button onclick="closeGlobalSearch(); askQuestionPreset('${query}')" class="mt-2 text-xs font-bold text-brand-600 underline">
+          Ask CampusBuddy AI &rarr;
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = matches.map((m, idx) => `
+    <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 hover:bg-brand-50 dark:hover:bg-slate-800 transition cursor-pointer flex items-center justify-between" onclick="window.__searchActions[${idx}]()">
+      <div>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">${m.type}</span>
+        <p class="font-bold text-slate-800 dark:text-slate-200 text-xs">${m.title}</p>
+        <p class="text-[11px] text-slate-500">${m.subtitle}</p>
+      </div>
+      <i class="fa-solid fa-arrow-right text-slate-400 text-xs"></i>
+    </div>
+  `).join('');
+
+  window.__searchActions = matches.map(m => m.action);
+}
+
+function openEmergencyModal() {
+  navigateTo('toolkit');
+  showToast('Scrolled to Campus Emergency SOS Helplines');
+}
+
+// -------------------------------------------------------------
+// TOAST NOTIFICATIONS
+// -------------------------------------------------------------
+function showToast(message) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = 'glass-panel px-4 py-3 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-100 flex items-center space-x-2 animate-fade-in pointer-events-auto';
+  toast.innerHTML = `
+    <div class="w-6 h-6 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px] shrink-0">
+      <i class="fa-solid fa-info"></i>
+    </div>
+    <span>${message}</span>
+  `;
+
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3200);
+}
+
+// Utility Helper
+function formatMarkdown(text) {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`(.*?)`/g, '<code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono text-[11px] text-brand-600 dark:text-brand-300">$1</code>')
+    .replace(/\n/g, '<br>');
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>'"]/g, 
+    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+  );
+}
+
+</script>
+</body>
+</html>
