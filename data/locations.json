@@ -1,0 +1,116 @@
+[
+  {
+    "id": "loc-library",
+    "name": "Central Library & Digital Knowledge Hub",
+    "category": "Academic",
+    "icon": "fa-book-open",
+    "floorInfo": "3 Floors (Ground, 1st & 2nd Floor)",
+    "timings": "8:00 AM - 11:00 PM (24/7 during exams)",
+    "location": "Behind Main Academic Quadrangle (Block 1)",
+    "image": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&auto=format&fit=crop&q=80",
+    "facilities": [
+      "Quiet Reading Halls with 500+ individual charging pods",
+      "Digital Research Lab & IEEE / ACM Journal Terminals",
+      "Automated RFID Book Issue & Return Kiosk",
+      "Group Discussion Rooms (Bookable via portal)"
+    ],
+    "tip": "Ground floor has quiet study cubicles; 2nd floor has high-speed Wi-Fi and discussion rooms.",
+    "coordinates": { "x": 50, "y": 32 },
+    "directionsFromGate": "Walk straight 150m past the Flag Plaza, take the right walkway behind Academic Block 1."
+  },
+  {
+    "id": "loc-canteen",
+    "name": "Central Canteen & Nescafe Food Court",
+    "category": "Food & Hangout",
+    "icon": "fa-utensils",
+    "floorInfo": "Open Courtyard & AC Seating Wing",
+    "timings": "7:30 AM - 10:30 PM",
+    "location": "Next to Student Activity Center (SAC) & Lawn 2",
+    "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop&q=80",
+    "facilities": [
+      "Multi-cuisine Food Stalls (Dosa, Thali, Chinese, Rolls, Chaat)",
+      "Nescafe Express Bar with iced frappe & grilled sandwiches",
+      "Large shaded gazebo seating with music lounge",
+      "All UPI & Student RFID Smart Card payments accepted"
+    ],
+    "tip": "Peak rush is 12:30 PM - 1:45 PM. The Maggi and cold coffee corner behind SAC is a fresher favorite!",
+    "coordinates": { "x": 70, "y": 55 },
+    "directionsFromGate": "From main gate, follow the central boulevard towards the left of the sports grounds."
+  },
+  {
+    "id": "loc-acad1",
+    "name": "Academic Block 1 & Lecture Theatre Complex",
+    "category": "Academic",
+    "icon": "fa-building-columns",
+    "floorInfo": "Ground to 4th Floor (LHC 101 - 308)",
+    "timings": "8:00 AM - 7:00 PM",
+    "location": "Directly opposite Main University Entrance Gate",
+    "image": "https://images.unsplash.com/photo-1562774053-701939374585?w=600&auto=format&fit=crop&q=80",
+    "facilities": [
+      "Stepped Smart Lecture Theatres with dual interactive screens",
+      "Central Computing Center (CCC) with 300 Linux/Win terminals",
+      "Faculty Cabins & Teaching Assistant Consultation Desks",
+      "Filtered Water Stations and Lift access on all wings"
+    ],
+    "tip": "All 1st Year CSE, ECE & Common Theory Lectures happen in LHC-101 and LHC-102.",
+    "coordinates": { "x": 32, "y": 38 },
+    "directionsFromGate": "Located immediately inside the Main Entrance Gate, right hand side."
+  },
+  {
+    "id": "loc-sports",
+    "name": "Indoor Sports Complex & Athletics Arena",
+    "category": "Sports & Fitness",
+    "icon": "fa-dumbbell",
+    "floorInfo": "Indoor Stadium & Outdoor Floodlit Courts",
+    "timings": "6:00 AM - 9:00 AM & 4:30 PM - 9:30 PM",
+    "location": "East Wing, adjacent to Boys Hostel 3 & 4",
+    "image": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop&q=80",
+    "facilities": [
+      "4 Wooden Badminton Courts & 6 Table Tennis Tables",
+      "Olympic Swimming Pool with certified lifeguards",
+      "Modern Gym & Strength Training Wing with trainers",
+      "Floodlit Basketball, Volleyball & Lawn Tennis courts"
+    ],
+    "tip": "Gym registration for freshers is free for the first semester! Bring 2 photos and ID card.",
+    "coordinates": { "x": 82, "y": 30 },
+    "directionsFromGate": "Take the east ring road for 300m, located right past the cafeteria lawn."
+  },
+  {
+    "id": "loc-admin",
+    "name": "Administration Block (Registrar & Dean Office)",
+    "category": "Administration",
+    "icon": "fa-landmark",
+    "floorInfo": "Ground & 1st Floor (Counters 1 to 6)",
+    "timings": "9:30 AM - 5:30 PM (Lunch: 1:30 PM - 2:30 PM)",
+    "location": "Near Main Flag Plaza & Clock Tower",
+    "image": "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80",
+    "facilities": [
+      "Student Affairs & Dean Academics Office",
+      "Accounts & Scholarship Helpdesk (Counters 1-3)",
+      "Bonafide Certificate, Bus Pass & ID Card Dispenser (Counter 4)",
+      "Anti-Ragging Squad & Student Welfare Cell"
+    ],
+    "tip": "Counter 4 handles ID cards and fee verification. Visit before 1:00 PM to avoid lines.",
+    "coordinates": { "x": 45, "y": 68 },
+    "directionsFromGate": "Walk 100m straight from the entrance gate towards the Clock Tower."
+  },
+  {
+    "id": "loc-health",
+    "name": "Campus Health & Wellness Center",
+    "category": "Health & Support",
+    "icon": "fa-heart-pulse",
+    "floorInfo": "Ground Floor (Standalone Healthcare Clinic)",
+    "timings": "24x7 Emergency Services • OPD: 9:00 AM - 8:00 PM",
+    "location": "Behind Health Plaza, near Girls Hostel Complex",
+    "image": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&auto=format&fit=crop&q=80",
+    "facilities": [
+      "Resident Medical Officers, Nurses & Pharmacist",
+      "Free consultations, basic medicines, and first-aid care",
+      "Dedicated 24/7 Campus Ambulance Service (Dial 108 / Ext: 2222)",
+      "Confidential Student Counseling & Mental Wellbeing Pods"
+    ],
+    "tip": "Emergency Doctor Hotline: 0175-2393-021 (Direct speed dial from campus intercom: 2222).",
+    "coordinates": { "x": 20, "y": 72 },
+    "directionsFromGate": "Follow the West pathway past the Humanities block towards Girls Hostel Gate."
+  }
+]
